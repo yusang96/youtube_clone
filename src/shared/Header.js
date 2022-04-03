@@ -5,7 +5,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { BsGrid3X3Gap } from 'react-icons/bs';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 
 
 function Header() {
@@ -19,7 +19,9 @@ function Header() {
     <div className={styles.header}>
       <div className={styles.tab}>
         <FiMenu className={styles.icon} />
-        <img src={youtube_logo} alt="로고" className={styles.logo} />
+        <Link to='/'>
+          <img src={youtube_logo} alt="로고" className={styles.logo} />
+        </Link>
       </div>
      <form onSubmit={handleSubmit}>
       <div className={styles['center-tab']}>
