@@ -1,6 +1,6 @@
 import {React,  useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-
+import { Link, useParams } from "react-router-dom"
+import styled from "styled-components"
 
 function Searched() {
     let date = new Date()
@@ -22,20 +22,31 @@ function Searched() {
         <div className='Search'>
         {searchs.map((video)=> {
         return (
-          <div key={video.id.videoId} >
+          <Video key={video.id.videoId} >
             <img src={`https://i.ytimg.com/vi/${video.id.videoId}/hqdefault.jpg`} alt={video.channelId} />
-            <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`}><h3 dangerouslySetInnerHTML={{ __html : video.snippet.title}}></h3></a>
-            <p>{video.snippet.channelTitle}</p>
-            <p>{date.getFullYear() > video.snippet.publishTime.slice(0,4) ? date.getFullYear() -video.snippet.publishTime.slice(0,4)+"년전" :
-                    date.getFullYear() - video.snippet.publishTime.slice(0,4) === 1 ? date.getMonth() + video.snippet.publishTime.slice(5,7) +'개월전':
-                    date.getFullYear() === video.snippet.publishTime.slice(0,4) && date.getMonth() > video.snippet.publishTime(5,7)? date.getMonth() - video.snippet.publishTime.slice(5,7) +'개월전': 
-                    video.snippet.publishTime.slice(8,10)-date.getDay() +'일전'}</p>
-          </div>
+            <Descript>
+              <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`}><h3 dangerouslySetInnerHTML={{ __html : video.snippet.title}}></h3></a>
+              <Link to={`/channel/${video.snippet.channelId}`}>{video.snippet.channelTitle}</Link>
+              <p>{date.getFullYear() > video.snippet.publishTime.slice(0,4) ? date.getFullYear() -video.snippet.publishTime.slice(0,4)+"년전" :
+                      date.getFullYear() - video.snippet.publishTime.slice(0,4) === 1 ? date.getMonth() + video.snippet.publishTime.slice(5,7) +'개월전':
+                      date.getFullYear() === video.snippet.publishTime.slice(0,4) && date.getMonth() > video.snippet.publishTime(5,7)? date.getMonth() - video.snippet.publishTime.slice(5,7) +'개월전': 
+                      video.snippet.publishTime.slice(8,10)-date.getDay() +'일전'}</p>
+            </Descript>
+          </Video>
         
         )
       })}
       </div>
     )
 }
+
+const Video = styled.div`
+  display : flex;
+  margin-top : 60px;
+`
+
+const Descript = styled.div`
+  margin-left : 20px;
+`
 
 export default Searched

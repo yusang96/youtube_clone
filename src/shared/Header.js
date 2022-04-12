@@ -5,7 +5,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { BsGrid3X3Gap } from 'react-icons/bs';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
 import { useState } from 'react';
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function Header() {
@@ -26,7 +26,7 @@ function Header() {
      <form onSubmit={handleSubmit}>
       <div className={styles['center-tab']}>
           <input className={styles.input} value={input} onChange={(e)=>setInput(e.target.value)} />
-          <IoSearchOutline className={styles['search-icon']} />
+          <IoSearchOutline className={styles['search-icon']} onClick={handleSubmit} />
         </div>
      </form>
       <div className={styles.tab}>

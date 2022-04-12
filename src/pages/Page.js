@@ -2,7 +2,7 @@ import React from "react"
 import { Route, Routes } from "react-router-dom"
 import Home from "./Home"
 import Searched from "./Searched"
-import Subscribe from "./Subscribe"
+import Channel from "./Channel"
 
 function Page() {
     return (
@@ -10,7 +10,7 @@ function Page() {
             <Routes>
                 <Route path="/" element={<Home/>}></Route>
                 <Route path="/searched/:input" element={<Searched/>}/>
-                <Route path="/sub/:id" element={<Subscribe/>}/>
+                <Route path="/channel/:id" element={<Channel/>}/>
             </Routes>
         </div>
     )
