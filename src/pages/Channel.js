@@ -21,10 +21,18 @@ function Channel() {
             {channel.map((details)=>{
                 return (
                     <div key={details.id}>
-                        <img src={details.brandingSettings.image.bannerExternalUrl} alt={details.bannerExternalUrl}/>
-                        <img src={details.snippet.thumbnails.medium.url} alt={details.id}/>
-                        <h3>{details.snippet.title}</h3>
-                        <p>구독자:{details.statistics.subscriberCount}</p>
+                        <BannerBox>
+                            <Banner src={details.brandingSettings.image.bannerExternalUrl} alt={details.bannerExternalUrl}/>
+                        </BannerBox>
+                        <ProfileBox>
+                            <ImgBox>
+                                <Img src={details.snippet.thumbnails.medium.url} alt={details.id}/>
+                            </ImgBox>
+                            <Profile>
+                                <h1>{details.snippet.title}</h1>
+                                <h3>구독자:{details.statistics.subscriberCount}명</h3>
+                            </Profile>
+                        </ProfileBox>
                     </div>
                 )
             })}
@@ -33,5 +41,34 @@ function Channel() {
 }
 const Chan = styled.div `
     margin-top : 60px;
+`
+const BannerBox = styled.div`
+    max-width :100%;
+    max-height:200px;
+    overflow : hidden
+`
+const Banner = styled.img`
+    width: 100%;
+    height : 720px;
+    margin-top:-17%;
+`
+const ImgBox = styled.div `
+    width: 150px;
+    height: 150px; 
+    border-radius: 70%;
+    overflow: hidden;
+`
+const Img = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+`
+const ProfileBox = styled.div`
+    display: flex;
+    padding : 20px 50px;
+`
+const Profile = styled.div`
+    margin-top : 10px;
+    margin-left : 20px;
 `
 export default Channel

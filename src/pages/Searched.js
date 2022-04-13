@@ -17,6 +17,7 @@ function Searched() {
     useEffect(()=>{
         getVideos(params.input);
         console.log(params.input)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       },[params.input])
     return (
         <div className='Search'>
