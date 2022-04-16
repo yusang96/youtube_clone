@@ -30,9 +30,15 @@ function Channel() {
                             </ImgBox>
                             <Profile>
                                 <h1>{details.snippet.title}</h1>
-                                <h3>구독자:{details.statistics.subscriberCount}명</h3>
+                                <h3>구독자:{details.statistics.subscriberCount.length>7 ? details.statistics.subscriberCount.slice(0,4)+"만명" : details.statistics.subscriberCount.length===7 ? details.statistics.subscriberCount.slice(0,3)+"만명" : 
+                                        details.statistics.subscriberCount.length===6 ? details.statistics.subscriberCount.slice(0,2)+"만명" : details.statistics.subscriberCount.length}</h3>
                             </Profile>
                         </ProfileBox>
+                        <DescriptionBox>
+                            <Descripttion>
+                                {details.snippet.description}
+                            </Descripttion>
+                        </DescriptionBox>
                     </div>
                 )
             })}
@@ -70,5 +76,11 @@ const ProfileBox = styled.div`
 const Profile = styled.div`
     margin-top : 10px;
     margin-left : 20px;
+`
+const DescriptionBox = styled.div`
+    width:100%;
+`
+const Descripttion = styled.h2`
+    text-align:center;
 `
 export default Channel
