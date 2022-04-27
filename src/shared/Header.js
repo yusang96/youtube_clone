@@ -8,7 +8,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 
-function Header() {
+
+function Header({isLogin , userObj}) {
+
   const [input,setInput] = useState('');
   const nav = useNavigate();
   const handleSubmit =(e)=> {
@@ -30,6 +32,9 @@ function Header() {
         </div>
      </form>
       <div className={styles.tab}>
+        {isLogin ? <Link to='/profile'> <h3>{userObj.displayName ? userObj.displayName : "유저"}</h3> </Link>: <Link to='/login'>
+          <button>로그인</button>
+        </Link> }
         <BsGrid3X3Gap className={styles.icon} />
         <HiOutlineDotsVertical className={styles.icon} />
       </div>

@@ -14,7 +14,7 @@ function Channel() {
     }
     useEffect(()=>{
         getChannels(params.id);
-        console.log(params.id)
+        console.log(params)
       },[params.id])
     return (
         <Chan>
