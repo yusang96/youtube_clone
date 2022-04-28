@@ -25,15 +25,52 @@ function Profile({userObj , refreshUser}) {
     console.log(userObj)
     return (
         <UserForm>
+            <h1>내 정보 관리</h1>
             <form onSubmit={onSubmit}>
-                <input className="ProfileName" type="text" placeholder = "name" onChange={onChange} value={newDisplayName}></input>
-                <input className = "ModifyProfile" type="submit" value="수정"/>
+                <InputName className="ProfileName" type="text" placeholder = "name" onChange={onChange} value={newDisplayName}></InputName><br/>
+                <Modify className = "ModifyProfile" type="submit" value="수정"/>
             </form>
-            <button onClick={onLogOut}>로그아웃</button>
+            <LogOut onClick={onLogOut}>로그아웃</LogOut>
         </UserForm>
     )
 }
 const UserForm = styled.div `
-    margin-top:60px;
+    height:510px;
+    margin:80px;
+    padding:20px; 
+    background:#eee;
+    text-align:center;
 `
+const InputName = styled.input`
+    width:500px;
+    height:32px;
+    border-radius:20px;
+    border:none;
+    padding:10px;
+    font-size:20px;
+    text-align:center;
+    margin:10px;
+    box-shadow:2px 2px 6px gray;
+`
+const Modify = styled.input`
+    width:400px;
+    background:#fff;
+    padding:10px;
+    margin:10px;
+    border-radius:20px;
+    border:none;
+    font-size:20px;
+    box-shadow:2px 2px 6px gray;
+`
+
+const LogOut = styled.button`
+    width:300px;
+    background-color:red;
+    font-size:20px;
+    color:#fff;
+    border-radius:20px;
+    padding:10px;
+    border:none;
+`
+
 export default Profile
