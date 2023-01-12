@@ -8,23 +8,22 @@ function Searched() {
     const API_KEY = process.env.REACT_APP_API_KEY;
     const [searchs , setSearched] = useState([]);
     let params = useParams();
-    const getVideos = async (name) => {
-      const api = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${name}&maxResults=10&order=viewCount&key=${API_KEY}`)
-      const data = await api.json();
-      console.log(data.items);
-      setSearched(data.items);
-    }
     useEffect(()=>{
+      const getVideos = async (name) => {
+        const api = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${name}&maxResults=10&order=viewCount&type=video&key=${API_KEY}`)
+        const data = await api.json();
+        console.log(data.items);
+        setSearched(data.items);
+      }
         getVideos(params.input);
-        console.log(params)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      },[params.input])
+      },[API_KEY, params, params.input])
     return (
         <div className='Search'>
         {searchs.map((video)=> {
         return (
           <Video key={video.id.videoId} >
-            <img src={`https://i.ytimg.com/vi/${video.id.videoId}/hqdefault.jpg`} alt={video.channelId} />
+            <iframe width='500' height='300' src={`https://www.youtube-nocookie.com/embed/${video.id.videoId}`} allowFullScreen  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                title="Embedded youtube"></iframe>
             <Descript>
               <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`}><h3 dangerouslySetInnerHTML={{ __html : video.snippet.title}}></h3></a>
               <Link to={`/channel/${video.snippet.channelId}`}>{video.snippet.channelTitle}</Link>
