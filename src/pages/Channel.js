@@ -5,27 +5,35 @@ import styled from "styled-components"
 function Channel() {
     const API_KEY = process.env.REACT_APP_API_KEY;
     const [channel , setChannel] = useState([]);
-    const [channelItemList , setChannelItemList] = useState([]);
+    const [channelVideoLists , setChannelVideoLists] = useState([]);
+    const [query , setQuery] = useState('');
+    const [nowPage,setNowPage] = useState('');
+    const [pages , setPages] = useState([]);
     let params = useParams();
     useEffect(()=>{
         const getChannels = async (channelId) => {
             const api = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${channelId}&key=${API_KEY}`)
             const data = await api.json();
-            console.log(data.items);
             setChannel(data.items);
           }
         const getVideos = async (channelId) => {
             // q = '커버' or 'shorts' 넣으면 커버 또는 shorts 리스트만 보여줌
             // usestate 로 처음엔 모두 보여주도록 하고 버튼 클릭 시 해당 리스트만 보여주도록 만들기
-            const api = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&order=date&channelId=${channelId}&key=${API_KEY}`)
+            const api = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&pageToken=${nowPage}&type=video&maxResults=6&order=date&channelId=${channelId}&key=${API_KEY}`)
             const data = await api.json();
-            console.log(data.items);
-            setChannelItemList(data.items);
+            setPages(data);
+            setChannelVideoLists(data.items);
           }
         getChannels(params.id);
         getVideos(params.id);
 
-      },[API_KEY, params.id])
+      },[API_KEY, nowPage, params.id, query])
+      const nextBtnClick = () => {
+        pages.nextPageToken ? setNowPage(pages.nextPageToken) : setNowPage('')
+      }
+      const prevBtnClick = () => {
+        pages.prevPageToken ? setNowPage(pages.prevPageToken) : setNowPage('');
+      }
     return (
         <Chan>
             {channel.map((details)=>{
@@ -49,7 +57,7 @@ function Channel() {
                 )
             })}
             <Grid>
-                {channelItemList.map((item) => {
+                {channelVideoLists.map((item) => {
                     return (
                         <DescriptionBox key={item.etag}>
                             <iframe width='500' height='300' src={`https://www.youtube-nocookie.com/embed/${item.id.videoId}`} allowFullScreen  
@@ -59,6 +67,10 @@ function Channel() {
                     )
                 })}
             </Grid>
+            <>
+                <button onClick={prevBtnClick}>이전</button>
+                <button onClick={nextBtnClick}>다음</button>
+            </>
         </Chan>
     )
 }
