@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import styled from "styled-components"
 import { Link } from 'react-router-dom';
+import { IVideo } from '../type/videoProps';
 
 
 function Home() {
@@ -20,7 +21,7 @@ function Home() {
   console.log(date);
     return (
         <Grid>
-          {videos.map((video)=> {
+          {videos.map((video:IVideo)=> {
           return ( 
             <Video key={video.id} >
               <iframe width='500' height='300' src={`https://www.youtube-nocookie.com/embed/${video.id}`} allowFullScreen  
@@ -43,7 +44,7 @@ const Grid = styled.div`
     grid-gap : 3rem;
     @media (max-width:768px) {
       grid-template-columns : repeat(2 , minmax(20rem,1fr));
-      grid-gap : 3rem;
+      grid-gap : 30px;
     }
 `;
 const Video = styled.div`
@@ -54,6 +55,8 @@ const Video = styled.div`
         text-align : center;
         padding : 20px;
     }
+    display : flex;
+    flex-direction: column;
 `;
 
 export default Home

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import styled from "styled-components"
+import { IChannel } from "../type/channelProps";
+import { IPages } from "../type/pageProps";
+import { ISearched } from "../type/searchVideoProps";
+import { IVideo } from "../type/videoProps";
 
 function Channel() {
     const API_KEY = process.env.REACT_APP_API_KEY;
@@ -8,15 +12,15 @@ function Channel() {
     const [channelVideoLists , setChannelVideoLists] = useState([]);
     const [query , setQuery] = useState('');
     const [nowPage,setNowPage] = useState('');
-    const [pages , setPages] = useState([]);
-    let params = useParams();
+    const [pages , setPages] = useState<IPages>();
+    let {id} = useParams();
     useEffect(()=>{
-        const getChannels = async (channelId) => {
+        const getChannels = async (channelId:string) => {
             const api = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${channelId}&key=${API_KEY}`)
             const data = await api.json();
             setChannel(data.items);
           }
-        const getVideos = async (channelId) => {
+        const getVideos = async (channelId:string) => {
             // q = '커버' or 'shorts' 넣으면 커버 또는 shorts 리스트만 보여줌
             // usestate 로 처음엔 모두 보여주도록 하고 버튼 클릭 시 해당 리스트만 보여주도록 만들기
             const api = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&pageToken=${nowPage}&type=video&maxResults=6&order=date&channelId=${channelId}&key=${API_KEY}`)
@@ -24,23 +28,23 @@ function Channel() {
             setPages(data);
             setChannelVideoLists(data.items);
           }
-        getChannels(params.id);
-        getVideos(params.id);
-
-      },[API_KEY, nowPage, params.id, query])
+        getChannels(id!);
+        getVideos(id!);
+      },[API_KEY, nowPage, id, query])
       const nextBtnClick = () => {
-        pages.nextPageToken ? setNowPage(pages.nextPageToken) : setNowPage('')
+        pages?.nextPageToken ? setNowPage(pages.nextPageToken) : setNowPage('')
       }
       const prevBtnClick = () => {
-        pages.prevPageToken ? setNowPage(pages.prevPageToken) : setNowPage('');
+        pages?.prevPageToken ? setNowPage(pages.prevPageToken) : setNowPage('');
       }
+      console.log(channel);
     return (
         <Chan>
-            {channel.map((details)=>{
+            {channel.map((details:IChannel)=>{
                 return (
                     <React.Fragment key={details.id}>
                         <BannerBox>
-                            <Banner src={details.brandingSettings.image.bannerExternalUrl} alt={details.bannerExternalUrl}/>
+                            <Banner src={details.brandingSettings.image.bannerExternalUrl} alt={details.id}/>
                         </BannerBox>
                         <ProfileBox>
                             <ImgBox>
@@ -57,7 +61,7 @@ function Channel() {
                 )
             })}
             <Grid>
-                {channelVideoLists.map((item) => {
+                {channelVideoLists.map((item:ISearched) => {
                     return (
                         <DescriptionBox key={item.etag}>
                             <iframe width='500' height='300' src={`https://www.youtube-nocookie.com/embed/${item.id.videoId}`} allowFullScreen  

@@ -2,24 +2,26 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../firebase"
 import styled from "styled-components"
-function Profile({userObj , refreshUser}) {
-    const [newDisplayName,setDisplayName] = useState(userObj.displayName);
+import { IUserObj } from "../type/userObjProps";
+
+function Profile({userObj , refreshUser}:IUserObj) {
+    const [newDisplayName,setDisplayName] = useState(userObj?.displayName);
     const navigate = useNavigate();
     const onLogOut = () =>{ 
         authService.signOut();
         navigate('/');
     };
-    const onChange = (e) => {
+    const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const {target : {value}} = e;
         setDisplayName(value);
     }
-    const onSubmit = async (e) => {
+    const onSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(userObj.displayName !== newDisplayName) {
-            await userObj.updateProfile({
+        if(userObj?.displayName !== newDisplayName) {
+            await userObj?.updateProfile({
                 displayName : newDisplayName,
             });
-            refreshUser();
+            refreshUser!();
         }
     }
     console.log(userObj)

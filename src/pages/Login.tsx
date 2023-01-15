@@ -10,7 +10,7 @@ function Login() {
     const [newAccount , setNewAccount] = useState(true);
     const [error , setError] = useState("");
     const nav = useNavigate();
-    const onChange = (e) => {
+    const onChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const {target : {name , value}} = e;
         if(name === "email") {
             setEmail(value);
@@ -18,7 +18,7 @@ function Login() {
             setPassword(value);
         }
     }
-    const onSubmit = async (e)=> {
+    const onSubmit = async (e:React.FormEvent<HTMLFormElement>)=> {
         e.preventDefault();
         try{   
             let data;
@@ -32,7 +32,9 @@ function Login() {
         console.log(data);
     }
     catch(error) {
+        if (error instanceof Error) {
             setError(error.message);
+            }
         }
     }
     const toggleAccount = () => setNewAccount(prev => !prev);

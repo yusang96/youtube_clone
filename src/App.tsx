@@ -4,17 +4,18 @@ import './App.css';
 import { authService } from './firebase';
 import Page from './pages/Page';
 import Header from './shared/Header';
+import { IUser } from './type/userType';
 function App() {
   const [isLogin , setIsLogin] = useState(false);
-  const [userObj , setUserObj] = useState("");
+  const [userObj , setUserObj] = useState<IUser>();
   useEffect(()=> {
     authService.onAuthStateChanged((user)=> {
         if(user) {
             setIsLogin(true);
             setUserObj({
-              displayName : user.displayName,
+              displayName : user.displayName! ,
               uid:user.uid,
-              updateProfile : (args) => user.updateProfile(args),
+              updateProfile : (args:IUser) => user.updateProfile(args),
             })
         }else{
             setIsLogin(false)
@@ -24,15 +25,17 @@ function App() {
 
 const refreshUser = () => {
   const user = authService.currentUser;
-  setUserObj({
-    displayName : user.displayName,
-    uid : user.uid,
-    updateProfile : (args) => user.updateProfile(args),
-  })
+  if (user) {
+    setUserObj({
+      displayName : user.displayName!,
+      uid : user.uid,
+      updateProfile : (args) => user.updateProfile(args),
+    })
+  }
 }
   return (
       <BrowserRouter>
-        <Header isLogin={isLogin} userObj={userObj} refreshUser={refreshUser}/>
+        <Header isLogin={isLogin} userObj={userObj}/>
         <Page userObj={userObj} refreshUser={refreshUser}/>
       </BrowserRouter>
   
