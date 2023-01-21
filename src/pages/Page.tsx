@@ -6,6 +6,7 @@ import Channel from "./Channel"
 import Login from "./Login"
 import Profile from "./Profile"
 import { IUser } from "../type/userType"
+import PlayLists from "../components/PlayLists"
 
 
 function Page({userObj ,refreshUser}:IUser) {
@@ -16,6 +17,7 @@ function Page({userObj ,refreshUser}:IUser) {
             <Route path="/channel/:id" element={<Channel/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/profile" element={<Profile userObj={userObj} refreshUser={refreshUser}/>}/>
+            <Route path='/playlist' element={<PlayLists/>}/>
         </Routes>
     )
 }

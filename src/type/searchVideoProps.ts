@@ -8,6 +8,9 @@ export interface ISearched {
         channelId : string;
         channelTitle : string;
         publishedAt : string;
+        resourceId : {
+            videoId : string;
+        }
     }
     statistics : {
         viewCount : string;
