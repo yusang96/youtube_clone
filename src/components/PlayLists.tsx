@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { IPages } from '../type/pageProps';
+import { IPlaylist } from '../type/playlistProps';
 import { ISearched } from '../type/searchVideoProps';
 import { IVideo } from '../type/videoProps';
 import Video from './Video'
@@ -12,14 +13,14 @@ const PlayLists = () => {
     const [musicPlayLists , setMusicPlayLists] = useState([]);
     const [videos, setVideos] = useState([]);
     const [pages , setPages] = useState<IPages>();
-    const [selectedVideo, setSelectedVideo] = useState();
-    let videoIdList = [] as string[]
-    musicPlayLists.map((x:ISearched) => {
+    const [selectedVideo, setSelectedVideo] = useState<IPlaylist>();
+    let videoIdList:string[] = []
+    musicPlayLists?.map((x:ISearched) => {
         return (
-            videoIdList.push("&id=" + x.snippet.resourceId.videoId)
+          videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
         )
-        });
-    let videoIDstring = videoIdList.join("");
+      });
+    let videoIDstring = videoIdList?.join("");
     useEffect(()=> {
         const getPlayList = async (id:string) => {
             const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
@@ -30,17 +31,16 @@ const PlayLists = () => {
         const getVideoInfo = async (idLists:string) => {
             const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics${idLists}&key=${API_KEY}`)
             const data = await res.json();
-            setVideos(data.items)
+            const sortedVideo = data?.items?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
+            setSelectedVideo(sortedVideo[0])
+            setVideos(sortedVideo)
         }
         getPlayList(musiclistId)
-        getVideoInfo(videoIDstring)
+        getVideoInfo(videoIDstring!)
     },[API_KEY, videoIDstring])
-    const selectVideo = (video:any) => {
-        setSelectedVideo(video);
-      };
-    if (videos) {
-        console.log(videos[0])
-    }
+    const selectVideo = (video:IPlaylist) => {
+      setSelectedVideo(video);
+    };
   return (
     <App>
       <Content>
@@ -51,9 +51,8 @@ const PlayLists = () => {
         )}
         <List>
           <VideoLists
-            videos={videos?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))}
+            videos={videos}
             onVideoClick={selectVideo}
-            display={selectedVideo ? 'list' : 'grid'}
           />
         </List>
       </Content>
@@ -61,10 +60,11 @@ const PlayLists = () => {
   )
 }
 const App = styled.div`
-     max-width: 80rem;
+  margin-top: 60px;
+  width : 100%;
 `
 const Content = styled.section`
-     display: flex;
+  display: flex;
 `
 const Detail = styled.div`
     flex: 1 1 70%;

@@ -1,16 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
+import { IPlaylist } from '../type/playlistProps'
+import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
-const VideoLists = ({videos,onVideoClick,display}:any) => {
+const VideoLists = ({videos,onVideoClick}:any) => {
   return (
     <Lists>
-    {videos?.map((video:any) => (
+    {videos?.map((video:IVideo) => (
       <VideoItem
         key={video.id}
         video={video}
         onVideoClick={onVideoClick}
-        display={display}
       />
     ))}
   </Lists>
@@ -18,7 +19,7 @@ const VideoLists = ({videos,onVideoClick,display}:any) => {
 }
 
 const Lists = styled.ul`
-      display: flex;
+  display: flex;
   flex-wrap: wrap;
   list-style: none;
   padding-left: 0;
