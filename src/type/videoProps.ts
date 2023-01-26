@@ -6,6 +6,11 @@ export interface IVideo {
         channelId : string;
         channelTitle : string;
         publishedAt : string;
+        thumbnails : {
+            medium : {
+                url : string
+            }
+        }
     }
     statistics : {
         viewCount : string;

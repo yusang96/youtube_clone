@@ -1,28 +1,25 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components';
-import { IPlaylist } from '../type/playlistProps';
+import { IVideo } from '../type/videoProps';
 
-const VideoItem =   ({ video, onVideoClick }:any) => {
+const VideoItem =   ({video , onVideoClick} : {video : IVideo , onVideoClick : (props:IVideo) => void}) => {
     const onClick = useCallback(() => {
-      console.log(video)
       onVideoClick(video)
     }, [onVideoClick, video]);
     return (
-      <>
-        <Container onClick={onClick}>
-          <Video >
-            <Thumnail
-              src={video.snippet.thumbnails.medium.url}
-              alt="video thumbnail"
-            />
-            <MetaDiv>
-              <Title>{video.snippet.title}</Title>
-              <Channel>{video.snippet.channelTitle}</Channel>
-              <h5>{video.statistics.viewCount}회</h5>
-            </MetaDiv>
-          </Video>
-        </Container>
-      </>
+      <Container onClick={onClick}>
+        <Video >
+          <Thumnail
+            src={video?.snippet?.thumbnails?.medium.url}
+            alt="video thumbnail"
+          />
+          <MetaDiv>
+            <Title>{video.snippet.title}</Title>
+            <Channel>{video.snippet.channelTitle}</Channel>
+            <h5>{video.statistics.viewCount}회</h5>
+          </MetaDiv>
+        </Video>
+      </Container>
     );
   }
 

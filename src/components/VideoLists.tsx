@@ -1,10 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { IPlaylist } from '../type/playlistProps'
 import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
-const VideoLists = ({videos,onVideoClick}:any) => {
+const VideoLists = ({videos,onVideoClick}:{videos :IVideo[] , onVideoClick : (props:IVideo) => void}) => {
   return (
     <Lists>
     {videos?.map((video:IVideo) => (
