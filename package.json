@@ -1,5 +1,5 @@
 {
-  "name": "dice-game",
+  "name": "youtube_clone",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
+    "react-player": "^2.11.0",
     "react-router-dom": "^6.2.2",
     "react-scripts": "5.0.0",
     "react-youtube": "^10.1.0",
