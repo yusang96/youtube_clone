@@ -9,6 +9,9 @@ export interface IVideo {
         thumbnails : {
             medium : {
                 url : string
+            },
+            maxres : {
+                url : string
             }
         }
     }

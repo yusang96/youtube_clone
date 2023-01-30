@@ -44,7 +44,7 @@ const PlayLists = () => {
       <Content>
         {selectedVideo && (
           <Detail>
-            <Video video={selectedVideo} />
+            <Video video={selectedVideo} videos={videos}/>
           </Detail>
         )}
         <List>
