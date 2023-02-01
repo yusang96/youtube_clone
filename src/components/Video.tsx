@@ -11,9 +11,10 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
   const [isPlaying , setIsPlaying] = useState(false)
   const [volume , setVolume] = useState(0.3)
   const [isMuted , setIsMuted] = useState(false);
-  const [elapsedTime , setElapsedTime] = useState(0);
+  const [elapsedTime , setElapsedTime] = useState('00:00');
   const [progressBar , setProgressBar] = useState(0);
   const [currentSeek, setCurrentSeek] =useState(0);
+  const [duration , setDuration] = useState(videos[nowIndex]?.contentDetails?.duration)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
   const togglePlaying = () => {
     setIsPlaying(prev => !prev)
@@ -35,6 +36,17 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
     } 
     setNowIndex(prev => prev+1)
   }
+  const nextVideo = () => {
+    if (nowIndex === videos.length-1) {
+      setNowIndex(0)
+    }
+    setNowIndex(prev => prev+1)
+  }
+  const prevVideo = () => {
+    if (nowIndex > 0) {
+      setNowIndex(prev => prev-1)
+    }
+  }
   const onSeekChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setCurrentSeek(parseInt(e.target.value))
     videoRef.current?.seekTo(currentSeek)
@@ -42,9 +54,21 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
   const onMutedToggle = () => {
     setIsMuted(prev => !prev)
   }
+  const formDuration = (value:string) => {
+    const minute = value?.slice(2,3)
+    const seconds = parseInt(value?.slice(4,6))
+    return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  }
+  const formElapsed = (value:number) => {
+    const minute = Math.floor(value / 60)
+    const seconds = Math.ceil(value - minute * 60)
+    return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`; 
+  }
   useEffect(() => {
-    setProgressBar((elapsedTime/totalTime) * 100)
-  },[elapsedTime, totalTime, volume])
+    setDuration(formDuration(videos[nowIndex]?.contentDetails?.duration))
+    setProgressBar((parseInt(elapsedTime)/totalTime) * 100)
+  },[duration, elapsedTime, nowIndex, totalTime, videos])
+  let nowTime = formElapsed(parseInt(elapsedTime))
   return (
     <Detail>
       <Thumbnails src={videos[nowIndex]?.snippet.thumbnails.maxres.url} alt='qew'/>
@@ -64,19 +88,22 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
           <ProgressGauge style={{width : `${progressBar}%`}}/>
         </ProgressBar>
     <Info>
-      <h3>{videos[nowIndex]?.snippet?.title}</h3>
-      <h4>{videos[nowIndex]?.snippet?.channelTitle}</h4>
+      <h4>{videos[nowIndex]?.snippet?.title}</h4>
       <h4>{videos[nowIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
-      <h4>{videos[nowIndex]?.statistics?.viewCount}회</h4>
+      <Progress>
+        <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange}/>
+        <p>{nowTime} | {duration}</p>
+      </Progress>
       <div style={{display:'flex'}}>
-        <button onClick={backwardBtn}>왼쪽</button>
+        <button onClick={backwardBtn}>-5</button>
         <button onClick={togglePlaying}>{isPlaying ? '멈춤' : "재생"}</button>
-        <button onClick={forwardBtn}>오른쪽</button>
-        <div style={{display : 'flex'}}>
+        <button onClick={forwardBtn}>+5</button>
+        <button onClick={nextVideo}>다음곡</button>
+        <button onClick={prevVideo}>이전곡</button>
+        <VolumeControls volume={volume * 100 } isMuted={isMuted}>
           {isMuted ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
           <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
-        </div>
-        <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange}/>
+        </VolumeControls>
       </div>
     </Info>
     </Detail>
@@ -102,6 +129,45 @@ const ProgressBar = styled.div`
 const ProgressGauge = styled.div`
   height: 7px;
   background-color: red;
+`
+
+const VolumeControls = styled.div<{volume : number; isMuted : boolean}>`
+  display :flex;
+
+  input[type='range'] {
+    -webkit-appearance: none;
+    height: 100%;
+    background: transparent;
+
+    &:focus {
+      outline: none;
+    }
+
+    //WEBKIT
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: ${(props) => (props.volume ? "#d9d9d9" : "#E5E7EB")};
+      margin-top: -5px;
+      cursor: pointer;
+    }
+    &::-webkit-slider-runnable-track {
+      height: 0.6rem;
+      background: ${(props) =>
+        props.volume && !props.isMuted
+          ? `linear-gradient(to right, #D9D9D9 ${props.volume}%, rgba(229, 231, 235, 0.5)
+        ${props.volume}% 100%)`
+          : "#E5E7EB"};
+      border-radius: 3rem;
+      transition: all 0.5s;
+      cursor: pointer;
+    }
+  }
+`
+const Progress = styled.div`
+  display :flex;
 `
 
 export default React.memo(Video)

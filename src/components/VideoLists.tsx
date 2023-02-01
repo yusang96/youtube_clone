@@ -19,6 +19,7 @@ const VideoLists = ({videos,onVideoClick}:{videos :IVideo[] , onVideoClick : (pr
 
 const Lists = styled.ul`
   display: flex;
+  height: 100%;
   flex-wrap: wrap;
   list-style: none;
   padding-left: 0;

@@ -26,7 +26,7 @@ const PlayLists = () => {
         }
         const getVideoInfo = async (idLists:string) => {
             if (idLists) {
-              const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics${idLists}&key=${API_KEY}`)
+              const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
               const data = await res.json();
               const sortedVideo = await data?.items?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
               setSelectedVideo(sortedVideo[0])
@@ -65,12 +65,13 @@ const Content = styled.section`
   display: flex;
 `
 const Detail = styled.div`
-    flex: 1 1 70%;
+  flex: 1 1 70%;
 `
 const List = styled.div`
-    flex: 1 1 30%;
-    overflow-y: scroll;
-    &::-webkit-scrollbar {
+  flex: 1 1 30%;
+  height : 735px;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
       width: 8px;
       height: 8px;
       border-radius: 6px;

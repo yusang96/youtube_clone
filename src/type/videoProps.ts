@@ -14,6 +14,9 @@ export interface IVideo {
                 url : string
             }
         }
+    },
+    contentDetails : {
+        duration : string
     }
     statistics : {
         viewCount : string;
