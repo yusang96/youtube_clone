@@ -8,21 +8,54 @@ import VideoLists from './VideoLists'
 const PlayLists = () => {
     const API_KEY = process.env.REACT_APP_API_KEY;
     const musiclistId = 'PLR2_QUSqS6X2FxXxOwq3uBRGj6luUoWBk'
+    const harryPlayListId ='PLK9rW7UvhqXY05BfQgtLx_e0DJEwAkSE7'
+    const berryPlayListId = 'PLIWPn8Vlm2Bm-FRmYH-rvG8EHhVU4fmLX'
+    const bombingPlayListId = 'PLdpjCrUcXsVQl5lQCUGsHs-yeM0X6hXNn'
     const [musicPlayLists , setMusicPlayLists] = useState([]);
+    const [harryPlayLists , setHarryPlayLists] = useState([]);
+    const [harryVideoLists, setHarrayVideoLists] =useState([]);
+    const [berryPlayLists , setBerryPlayLists] = useState([]);
+    const [berryVideoLists, setBerryVideoLists] =useState([]);
+    const [bombingPlayLists , setBombingPlayLists] = useState([]);
+    const [bombingVideoLists, setBombingVideoLists] =useState([]);
     const [videos, setVideos] = useState<IVideo[]>([]);
     const [selectedVideo, setSelectedVideo] = useState<IVideo>();
-    let videoIdList:string[] = []
-    musicPlayLists?.map((x:ISearched) => {
-        return (
-          videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
-        )
-      });
-    let videoIDstring = videoIdList?.join("");
+    const [index , setIndex] = useState(0);
+    const formatIdString = (list:IVideo[]) => {
+      let videoIdList:string[] = []
+      list?.map((x) => (
+            videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
+          ));
+      let videoIDstring = videoIdList?.join("");
+      return videoIDstring
+    }
+    const friaVideoIdList = formatIdString(musicPlayLists!)
+    const harryVideoIdList = formatIdString(harryPlayLists!)
+    const berryVideoIdList = formatIdString(berryPlayLists!)
+    const bombingVideoIdList = formatIdString(bombingPlayLists!)
     useEffect(()=> {
         const getPlayList = async (id:string) => {
             const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
             const data = await res.json();
             setMusicPlayLists(data.items);
+        }
+        const getHarryPlayList = async (id:string) => {
+          const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+          const data = await res.json();
+          const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
+          setHarryPlayLists(filteredData);
+        }
+        const getBerryPlayList = async (id:string) => {
+          const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+          const data = await res.json();
+          const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
+          setBerryPlayLists(filteredData);
+        }
+        const getBombingPlayList = async (id:string) => {
+          const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+          const data = await res.json();
+          const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
+          setBombingPlayLists(filteredData);
         }
         const getVideoInfo = async (idLists:string) => {
             if (idLists) {
@@ -33,24 +66,57 @@ const PlayLists = () => {
               setVideos(sortedVideo)
             }
         }
+        const getHarryVideo =  async (idLists:string) => {
+          if (idLists) {
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
+            const data = await res.json();
+            setHarrayVideoLists(data.items)
+          }
+      }
+      const getBerryVideo =  async (idLists:string) => {
+        if (idLists) {
+          const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
+          const data = await res.json();
+          setBerryVideoLists(data.items)
+        }
+      }
+      const getBombingVideo =  async (idLists:string) => {
+        if (idLists) {
+          const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
+          const data = await res.json();
+          setBombingVideoLists(data.items)
+        }
+      }
         getPlayList(musiclistId)
-        getVideoInfo(videoIDstring!)
-    },[API_KEY, videoIDstring])
+        getHarryPlayList(harryPlayListId)
+        getBerryPlayList(berryPlayListId)
+        getBombingPlayList(bombingPlayListId)
+        getVideoInfo(friaVideoIdList!)
+        getHarryVideo(harryVideoIdList!)
+        getBerryVideo(berryVideoIdList)
+        getBombingVideo(bombingVideoIdList)
+    },[API_KEY, berryVideoIdList, bombingVideoIdList, friaVideoIdList, harryVideoIdList])
     const selectVideo = (video:IVideo) => {
       setSelectedVideo(video);
     };
+    const selectVideoIndex = (index :number) => {
+      setIndex(index);
+    }
+    let newVideos = [...videos,...harryVideoLists,...berryVideoLists,...bombingVideoLists].sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
+  
   return (
     <App>
       <Content>
         {selectedVideo && (
           <Detail>
-            <Video video={selectedVideo} videos={videos}/>
+            <Video video={selectedVideo} videos={newVideos} idx={index}/>
           </Detail>
         )}
         <List>
           <VideoLists
-            videos={videos}
+            videos={newVideos}
             onVideoClick={selectVideo}
+            onVideoIndex ={selectVideoIndex}
           />
         </List>
       </Content>

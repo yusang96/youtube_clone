@@ -4,10 +4,15 @@ import { IVideo } from '../type/videoProps'
 import ReactPlayer from 'react-player/lazy'
 import MuteSpeaker from '../data/Mute_Icon.svg'
 import Speaker from '../data/Speaker_Icon.svg'
-const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
-  console.log(videos)
+import Play from '../data/play.svg'
+import Pause from '../data/pause.svg'
+import Prev from '../data/prev.svg'
+import Next from '../data/next.svg'
+
+const Video = ({video,videos,idx}:{video:IVideo,videos:IVideo[],idx:number} ) => {
   const videoRef = useRef<ReactPlayer>(null)
   const [nowIndex , setNowIndex] = useState(0);
+  const [index, setIndex] =useState(idx);
   const [isPlaying , setIsPlaying] = useState(false)
   const [volume , setVolume] = useState(0.3)
   const [isMuted , setIsMuted] = useState(false);
@@ -37,10 +42,10 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
     setNowIndex(prev => prev+1)
   }
   const nextVideo = () => {
+    setNowIndex(prev => prev + 1)
     if (nowIndex === videos.length-1) {
       setNowIndex(0)
     }
-    setNowIndex(prev => prev+1)
   }
   const prevVideo = () => {
     if (nowIndex > 0) {
@@ -67,11 +72,11 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
   useEffect(() => {
     setDuration(formDuration(videos[nowIndex]?.contentDetails?.duration))
     setProgressBar((parseInt(elapsedTime)/totalTime) * 100)
-  },[duration, elapsedTime, nowIndex, totalTime, videos])
+  },[duration, elapsedTime, idx, index, nowIndex, totalTime, videos])
   let nowTime = formElapsed(parseInt(elapsedTime))
   return (
     <Detail>
-      <Thumbnails src={videos[nowIndex]?.snippet.thumbnails.maxres.url} alt='qew'/>
+      <Thumbnails src={videos[nowIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
       <ReactPlayer 
         ref={videoRef}
         url={`https://www.youtube-nocookie.com/embed/${videos[nowIndex]?.id}`} 
@@ -95,11 +100,11 @@ const Video = ({video,videos}:{video:IVideo,videos:IVideo[]} ) => {
         <p>{nowTime} | {duration}</p>
       </Progress>
       <div style={{display:'flex'}}>
+        <img src={Prev} alt='prev' onClick={prevVideo} style={{width :'30px', height : '30px'}}></img>
         <button onClick={backwardBtn}>-5</button>
-        <button onClick={togglePlaying}>{isPlaying ? '멈춤' : "재생"}</button>
+        {isPlaying ? <img src={Pause} alt='pause' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/> : <img src={Play} alt='play' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/>}
         <button onClick={forwardBtn}>+5</button>
-        <button onClick={nextVideo}>다음곡</button>
-        <button onClick={prevVideo}>이전곡</button>
+        <img src={Next} alt="next" onClick={nextVideo} style={{width :'30px', height : '30px'}}></img>
         <VolumeControls volume={volume * 100 } isMuted={isMuted}>
           {isMuted ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
           <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>

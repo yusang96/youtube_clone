@@ -3,14 +3,16 @@ import styled from 'styled-components'
 import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
-const VideoLists = ({videos,onVideoClick}:{videos :IVideo[] , onVideoClick : (props:IVideo) => void}) => {
+const VideoLists = ({videos,onVideoClick,onVideoIndex}:{videos :IVideo[] , onVideoClick : (props:IVideo) => void,onVideoIndex: (props:number) => void}) => {
   return (
     <Lists>
-    {videos?.map((video:IVideo) => (
+    {videos?.map((video:IVideo,index) => (
       <VideoItem
         key={video.id}
         video={video}
         onVideoClick={onVideoClick}
+        onVideoIndex={onVideoIndex}
+        idx ={index}
       />
     ))}
   </Lists>

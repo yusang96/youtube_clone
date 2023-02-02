@@ -2,15 +2,16 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components';
 import { IVideo } from '../type/videoProps';
 
-const VideoItem =   ({video , onVideoClick} : {video : IVideo , onVideoClick : (props:IVideo) => void}) => {
+const VideoItem =   ({video , onVideoClick,onVideoIndex,idx} : {video : IVideo , onVideoClick : (props:IVideo) => void , onVideoIndex: (props:number) => void,idx:number}) => {
     const onClick = useCallback(() => {
       onVideoClick(video)
-    }, [onVideoClick, video]);
+      onVideoIndex(idx)
+    }, [idx, onVideoClick, onVideoIndex, video]);
     return (
       <Container onClick={onClick}>
         <Video >
           <Thumnail
-            src={video?.snippet?.thumbnails?.medium.url}
+            src={video?.snippet?.thumbnails?.maxres.url}
             alt="video thumbnail"
           />
           <MetaDiv>
