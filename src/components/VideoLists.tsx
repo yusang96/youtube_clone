@@ -3,15 +3,13 @@ import styled from 'styled-components'
 import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
-const VideoLists = ({videos,onVideoClick,onVideoIndex}:{videos :IVideo[] , onVideoClick : (props:IVideo) => void,onVideoIndex: (props:number) => void}) => {
+const VideoLists = ({videos}:{videos :IVideo[]}) => {
   return (
     <Lists>
     {videos?.map((video:IVideo,index) => (
       <VideoItem
         key={video.id}
         video={video}
-        onVideoClick={onVideoClick}
-        onVideoIndex={onVideoIndex}
         idx ={index}
       />
     ))}
@@ -28,4 +26,4 @@ const Lists = styled.ul`
   margin: 0;
 `
 
-export default VideoLists
+export default React.memo(VideoLists)

@@ -8,21 +8,18 @@ import Play from '../data/play.svg'
 import Pause from '../data/pause.svg'
 import Prev from '../data/prev.svg'
 import Next from '../data/next.svg'
+import { useSelector } from 'react-redux/es/hooks/useSelector'
+import { useDispatch } from 'react-redux/es/exports'
+import { videoActions } from '../store/videoSlice'
 
-const Video = ({video,videos,idx}:{video:IVideo,videos:IVideo[],idx:number} ) => {
+const Video = ({videos}:{videos:IVideo[]} ) => {
+  const dispatch = useDispatch()
+  const {isPlaying,isMuted,volume,progressTime,elapsedTime,currentSeek,duration} = useSelector((state:any) => state.video)
+  const videoIndex = useSelector((state:any)=>state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
-  const [nowIndex , setNowIndex] = useState(0);
-  const [index, setIndex] =useState(idx);
-  const [isPlaying , setIsPlaying] = useState(false)
-  const [volume , setVolume] = useState(0.3)
-  const [isMuted , setIsMuted] = useState(false);
-  const [elapsedTime , setElapsedTime] = useState('00:00');
-  const [progressBar , setProgressBar] = useState(0);
-  const [currentSeek, setCurrentSeek] =useState(0);
-  const [duration , setDuration] = useState(videos[nowIndex]?.contentDetails?.duration)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
   const togglePlaying = () => {
-    setIsPlaying(prev => !prev)
+    dispatch(videoActions.setIsPlaying())
   }
   const backwardBtn = () => {
     videoRef?.current?.seekTo(videoRef.current.getCurrentTime()-5)
@@ -32,32 +29,26 @@ const Video = ({video,videos,idx}:{video:IVideo,videos:IVideo[],idx:number} ) =>
   }
   const onVolumeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value)/100
-    setVolume(newValue)
-    newValue === 0 ? setIsMuted(true) : setIsMuted(false)
+    dispatch(videoActions.setVolume(newValue))
+    newValue === 0 ? dispatch(videoActions.setIsMuted(true)) : dispatch(videoActions.setIsMuted(false))
   }
   const handleNextVideo = () => {
-    if (nowIndex === videos.length -1 ) {
-      setNowIndex(0)
+    if (videoIndex === videos.length -1 ) {
+      dispatch(videoActions.currentIndex(0))
     } 
-    setNowIndex(prev => prev+1)
+    dispatch(videoActions.currentIndex(videoIndex+1))
   }
-  const nextVideo = () => {
-    setNowIndex(prev => prev + 1)
-    if (nowIndex === videos.length-1) {
-      setNowIndex(0)
-    }
-  }
-  const prevVideo = () => {
-    if (nowIndex > 0) {
-      setNowIndex(prev => prev-1)
+  const handlePrevVideo = () => {
+    if (videoIndex > 0) {
+      dispatch(videoActions.currentIndex(videoIndex-1))
     }
   }
   const onSeekChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentSeek(parseInt(e.target.value))
+    dispatch(videoActions.setCurrentSeek(parseInt(e.target.value)))
     videoRef.current?.seekTo(currentSeek)
   }
   const onMutedToggle = () => {
-    setIsMuted(prev => !prev)
+    dispatch(videoActions.setIsMuted(null))
   }
   const formDuration = (value:string) => {
     const minute = value?.slice(2,3)
@@ -70,43 +61,45 @@ const Video = ({video,videos,idx}:{video:IVideo,videos:IVideo[],idx:number} ) =>
     return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`; 
   }
   useEffect(() => {
-    setDuration(formDuration(videos[nowIndex]?.contentDetails?.duration))
-    setProgressBar((parseInt(elapsedTime)/totalTime) * 100)
-  },[duration, elapsedTime, idx, index, nowIndex, totalTime, videos])
+    dispatch(videoActions.setDuration(videos[videoIndex]?.contentDetails?.duration))
+    dispatch(videoActions.setDuration(formDuration(videos[videoIndex]?.contentDetails?.duration)))
+    dispatch(videoActions.setProgressTime((parseInt(elapsedTime)/totalTime) * 100))
+  },[duration, elapsedTime, videoIndex, totalTime, videos, dispatch])
   let nowTime = formElapsed(parseInt(elapsedTime))
+  console.log(elapsedTime)
   return (
     <Detail>
-      <Thumbnails src={videos[nowIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
+      <Thumbnails src={videos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
       <ReactPlayer 
         ref={videoRef}
-        url={`https://www.youtube-nocookie.com/embed/${videos[nowIndex]?.id}`} 
+        url={`https://www.youtube-nocookie.com/embed/${videos[videoIndex]?.id}`} 
         width='100%'
         height='500px'
         volume={volume}
         muted={isMuted}
         playing={isPlaying}
-        onProgress = {(progress:any) => setElapsedTime(progress.playedSeconds)}
+        onProgress = {(progress:any) => dispatch(videoActions.setElapsedTime(progress.playedSeconds))}
         onEnded ={handleNextVideo}
         style={{display : 'none'}}
         />
         <ProgressBar>
-          <ProgressGauge style={{width : `${progressBar}%`}}/>
+          <ProgressGauge style={{width : `${progressTime}%`}}/>
         </ProgressBar>
     <Info>
-      <h4>{videos[nowIndex]?.snippet?.title}</h4>
-      <h4>{videos[nowIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
+      <h4>{videos[videoIndex]?.snippet?.title}</h4>
+      <h4>{videos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
       <Progress>
         <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange}/>
         <p>{nowTime} | {duration}</p>
       </Progress>
       <div style={{display:'flex'}}>
-        <img src={Prev} alt='prev' onClick={prevVideo} style={{width :'30px', height : '30px'}}></img>
+        <img src={Prev} alt='prev' onClick={handlePrevVideo} style={{width :'30px', height : '30px'}}></img>
         <button onClick={backwardBtn}>-5</button>
         {isPlaying ? <img src={Pause} alt='pause' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/> : <img src={Play} alt='play' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/>}
         <button onClick={forwardBtn}>+5</button>
-        <img src={Next} alt="next" onClick={nextVideo} style={{width :'30px', height : '30px'}}></img>
-        <VolumeControls volume={volume * 100 } isMuted={isMuted}>
-          {isMuted ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
+        <img src={Next} alt="next" onClick={handleNextVideo} style={{width :'30px', height : '30px'}}></img>
+        <VolumeControls volume={volume * 100} isMuted={isMuted}>
+          {isMuted ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
           <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
         </VolumeControls>
       </div>

@@ -38,7 +38,6 @@ const refreshUser = () => {
         <Header isLogin={isLogin} userObj={userObj}/>
         <Page userObj={userObj} refreshUser={refreshUser}/>
       </BrowserRouter>
-  
   );
 }
 

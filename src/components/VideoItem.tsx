@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react'
+import { useDispatch } from 'react-redux/es/exports';
 import styled from 'styled-components';
+import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 
-const VideoItem =   ({video , onVideoClick,onVideoIndex,idx} : {video : IVideo , onVideoClick : (props:IVideo) => void , onVideoIndex: (props:number) => void,idx:number}) => {
+const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
+    const dispatch = useDispatch()
     const onClick = useCallback(() => {
-      onVideoClick(video)
-      onVideoIndex(idx)
-    }, [idx, onVideoClick, onVideoIndex, video]);
+      dispatch(videoActions.currentIndex(idx))
+    }, [dispatch, idx]);
     return (
       <Container onClick={onClick}>
         <Video >
@@ -24,10 +26,10 @@ const VideoItem =   ({video , onVideoClick,onVideoIndex,idx} : {video : IVideo ,
     );
   }
 
-  const Container = styled.li`
-    width: 100%;
-    padding: 0.2em;
-  `
+const Container = styled.li`
+  width: 100%;
+  padding: 0.2em;
+`
 const Video = styled.div`
   display: flex;
   align-items: center;
