@@ -1,7 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { IVideo } from '../type/videoProps';
 
-const initialVideoState = {
-    coverVideos : [],
+interface IVideoProps {
+    selectedVideo : IVideo[]
+    index : string
+    isPlaying:boolean
+    isMuted : boolean
+    volume :number
+    elapsedTime : string
+    progressTime :number
+    currentSeek :number
+    duration:number
+}
+
+const initialVideoState:IVideoProps = {
+    selectedVideo : [],
     index : '',
     isPlaying:false,
     isMuted:false,
@@ -16,8 +29,8 @@ const videoSlice = createSlice({
     name : 'video' ,
     initialState :initialVideoState ,
     reducers : {
-        setCoverVideos(state,action) {
-            state.coverVideos = action.payload
+        setSelectedVideo(state,action) {
+            state.selectedVideo = action.payload
         }
         ,
         currentIndex(state, action) {

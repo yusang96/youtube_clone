@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { IVideo } from '../type/videoProps'
 import ReactPlayer from 'react-player/lazy'
@@ -11,11 +11,12 @@ import Next from '../data/next.svg'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { useDispatch } from 'react-redux/es/exports'
 import { videoActions } from '../store/videoSlice'
+import { RootState } from '../store/store'
 
 const Video = ({videos}:{videos:IVideo[]} ) => {
   const dispatch = useDispatch()
-  const {isPlaying,isMuted,volume,progressTime,elapsedTime,currentSeek,duration} = useSelector((state:any) => state.video)
-  const videoIndex = useSelector((state:any)=>state.video.index)
+  const {isPlaying,isMuted,volume,progressTime,elapsedTime,currentSeek,duration} = useSelector((state:RootState) => state.video)
+  const videoIndex = useSelector((state:any) => state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
   const togglePlaying = () => {
@@ -66,7 +67,6 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
     dispatch(videoActions.setProgressTime((parseInt(elapsedTime)/totalTime) * 100))
   },[duration, elapsedTime, videoIndex, totalTime, videos, dispatch])
   let nowTime = formElapsed(parseInt(elapsedTime))
-  console.log(elapsedTime)
   return (
     <Detail>
       <Thumbnails src={videos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
@@ -82,9 +82,6 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
         onEnded ={handleNextVideo}
         style={{display : 'none'}}
         />
-        <ProgressBar>
-          <ProgressGauge style={{width : `${progressTime}%`}}/>
-        </ProgressBar>
     <Info>
       <h4>{videos[videoIndex]?.snippet?.title}</h4>
       <h4>{videos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
