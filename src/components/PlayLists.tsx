@@ -6,22 +6,19 @@ import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 import Video from './Video'
 import VideoLists from './VideoLists'
-import { getHarryVideos,getHarryVideosInfo } from '../store/playlistSlice';
+import { getHarryVideos,getHarryVideosInfo,getBerryVideos,getBerryVideosInfo,getBombingVideos,getBombingVideosInfo,getFriaVideos,getFriaVideosInfo} from '../store/playlistSlice';
 import { AppDispatch } from '../store/store';
 
 const PlayLists = () => {
   const dispatch = useDispatch<AppDispatch>()
   const videoIndex = useSelector((state:any)=>state.video.index)
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
-  const { music , harry,berry,bombing,harryData, harryInfo} = useSelector((state:any) => state.playlist)
+  const { friaMusic,friaData,friaPlaylist,harryData, harryInfo,berryData,berryInfo,bombingData,bombingInfo , allVideos} = useSelector((state:any) => state.playlist)
   const API_KEY = process.env.REACT_APP_API_KEY;
   const friaplaylistId = 'PLR2_QUSqS6X2FxXxOwq3uBRGj6luUoWBk'
   const harryPlayListId ='PLK9rW7UvhqXY05BfQgtLx_e0DJEwAkSE7'
   const berryPlayListId = 'PLIWPn8Vlm2Bm-FRmYH-rvG8EHhVU4fmLX'
   const bombingPlayListId = 'PLdpjCrUcXsVQl5lQCUGsHs-yeM0X6hXNn'
-  const [musicPlayLists , setMusicPlayLists] = useState([]);
-  const [berryPlayLists , setBerryPlayLists] = useState([]);
-  const [bombingPlayLists , setBombingPlayLists] = useState([]);
   const formatIdString = (list:IVideo[]) => {
     let videoIdList:string[] = []
     list?.map((x) => (
@@ -30,28 +27,11 @@ const PlayLists = () => {
     let videoIDstring = videoIdList?.join("");
     return videoIDstring
   }
-  const friaVideoIdList = formatIdString(musicPlayLists!)
+  const friaVideoIdList = formatIdString(friaData!)
   const harryVideoIdList = formatIdString(harryData!)
-  const berryVideoIdList = formatIdString(berryPlayLists!)
-  const bombingVideoIdList = formatIdString(bombingPlayLists!)
+  const berryVideoIdList = formatIdString(berryData!)
+  const bombingVideoIdList = formatIdString(bombingData!)
     useEffect(()=> {
-      const getPlayList = async (id:string) => {
-          const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
-          const data = await res.json();
-          setMusicPlayLists(data.items);
-      }
-      const getBerryPlayList = async (id:string) => {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
-        const data = await res.json();
-        const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
-        setBerryPlayLists(filteredData);
-      }
-      const getBombingPlayList = async (id:string) => {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
-        const data = await res.json();
-        const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
-        setBombingPlayLists(filteredData);
-      }
       const getVideoInfo = async (idLists:string) => {
         if (idLists) {
           const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
@@ -60,34 +40,21 @@ const PlayLists = () => {
           dispatch(playlistActions.setMusic(sortedVideo))
         }
       }
-    const getBerryVideo =  async (idLists:string) => {
-      if (idLists) {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
-        const data = await res.json();
-        dispatch(playlistActions.setBerryMusic(data.items))
-      }
-    }
-    const getBombingVideo =  async (idLists:string) => {
-      if (idLists) {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
-        const data = await res.json();
-        dispatch(playlistActions.setBombingMusic(data.items))
-      }
-    }
     dispatch(getHarryVideos(harryPlayListId))
     dispatch(getHarryVideosInfo(harryVideoIdList))
-    getPlayList(friaplaylistId)
-    getBerryPlayList(berryPlayListId)
-    getBombingPlayList(bombingPlayListId)
+    dispatch(getBerryVideos(berryPlayListId))
+    dispatch(getBerryVideosInfo(berryVideoIdList))
+    dispatch(getBombingVideos(bombingPlayListId))
+    dispatch(getBombingVideosInfo(bombingVideoIdList))
+    dispatch(getFriaVideos(friaplaylistId))
+    dispatch(getFriaVideosInfo(friaVideoIdList))
     getVideoInfo(friaVideoIdList!)
-    getBerryVideo(berryVideoIdList)
-    getBombingVideo(bombingVideoIdList)
   },[API_KEY, berryVideoIdList, bombingVideoIdList, dispatch, friaVideoIdList, harryVideoIdList])
-  let coverVideos = [...music,...harry,...berry,...bombing].sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
+  let coverVideos = [...friaMusic].sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
   useEffect(() => {
     dispatch(videoActions.setSelectedVideo(coverVideos[videoIndex]))
-  },[coverVideos, dispatch, videoIndex])
-  console.log(harryInfo)
+  },[allVideos, coverVideos, dispatch, videoIndex])
+
   return (
     <App>
       <Content>
