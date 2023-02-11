@@ -2,11 +2,15 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IVideo } from "../type/videoProps";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
+const friaplaylistId = 'PLR2_QUSqS6X2FxXxOwq3uBRGj6luUoWBk'
+const harryPlayListId ='PLK9rW7UvhqXY05BfQgtLx_e0DJEwAkSE7'
+const berryPlayListId = 'PLIWPn8Vlm2Bm-FRmYH-rvG8EHhVU4fmLX'
+const bombingPlayListId = 'PLdpjCrUcXsVQl5lQCUGsHs-yeM0X6hXNn'
 
 export const getFriaVideos = createAsyncThunk('get/friaVideos',
-    async (id:string ) => {
+    async () => {
         try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${friaplaylistId}&maxResults=10&key=${API_KEY}`)
             const data = await res.json();
             return data.items
         } catch(err:any) {
@@ -28,9 +32,9 @@ export const getFriaVideosInfo = createAsyncThunk('get/friaInfo' ,
     })
 
 export const getHarryVideos = createAsyncThunk('get/harryVideos',
-    async (id:string ) => {
+    async () => {
         try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${harryPlayListId}&maxResults=10&key=${API_KEY}`)
             const data = await res.json();
             const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
             return filteredData
@@ -53,9 +57,9 @@ export const getHarryVideosInfo = createAsyncThunk('get/harryInfo' ,
     })
 
 export const getBerryVideos = createAsyncThunk('get/berryVideos' , 
-    async (id:string ) => {
+    async () => {
         try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${berryPlayListId}&maxResults=10&key=${API_KEY}`)
             const data = await res.json();
             const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
             return filteredData
@@ -77,9 +81,9 @@ export const getBerryVideosInfo = createAsyncThunk('get/berryInfo' ,
     })
 
     export const getBombingVideos = createAsyncThunk('get/bombingVideos' , 
-    async (id:string ) => {
+    async () => {
         try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=10&key=${API_KEY}`)
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${bombingPlayListId}&maxResults=10&key=${API_KEY}`)
             const data = await res.json();
             const filteredData = await data.items.filter((item:any) =>item.snippet.description !== "This video is private.")
             return filteredData
@@ -139,8 +143,7 @@ const playlistSlice = createSlice({
     initialState : initialPlaylistState,
     reducers : {
         setAllMusic(state,action) {
-            let newPlaylist = state.allVideos.concat(action.payload)
-            state.allVideos = newPlaylist
+            state.allVideos.push(...action.payload)
         },
         setMusic(state,action) {
             state.friaMusic = action.payload
@@ -160,26 +163,33 @@ const playlistSlice = createSlice({
             state.friaData = payload
         });
         builder.addCase(getFriaVideosInfo.fulfilled, (state:IPlaylistProps, { payload }) => {
-            state.friaPlaylist = payload
-            //state.allVideos.push(payload)
+            if (payload) {            
+                state.friaPlaylist = payload
+            }
         });
         builder.addCase(getHarryVideos.fulfilled, (state, { payload }) => {
             state.harryData = payload
         });
         builder.addCase(getHarryVideosInfo.fulfilled, (state, { payload }) => {
-            state.harryInfo = payload
+            if (payload) {
+                state.harryInfo = payload
+            }
         });
         builder.addCase(getBerryVideos.fulfilled, (state, { payload }) => {
             state.berryData = payload
         });
         builder.addCase(getBerryVideosInfo.fulfilled, (state, { payload }) => {
-            state.berryInfo = payload
+            if (payload) {
+                state.berryInfo = payload
+            }
         });
         builder.addCase(getBombingVideos.fulfilled, (state, { payload }) => {
             state.bombingData = payload
         });
         builder.addCase(getBombingVideosInfo.fulfilled, (state, { payload }) => {
-            state.bombingInfo = payload
+            if (payload) {
+                state.bombingInfo = payload
+            }
         });
     },
 })

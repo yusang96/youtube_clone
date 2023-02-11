@@ -8,6 +8,8 @@ import Play from '../data/play.svg'
 import Pause from '../data/pause.svg'
 import Prev from '../data/prev.svg'
 import Next from '../data/next.svg'
+import Loop from '../data/loop-69.svg'
+import NotLoop from '../data/loop-none.svg'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { useDispatch } from 'react-redux/es/exports'
 import { videoActions } from '../store/videoSlice'
@@ -15,7 +17,7 @@ import { RootState } from '../store/store'
 
 const Video = ({videos}:{videos:IVideo[]} ) => {
   const dispatch = useDispatch()
-  const {isPlaying,isMuted,volume,progressTime,elapsedTime,currentSeek,duration} = useSelector((state:RootState) => state.video)
+  const {isPlaying,isMuted,volume,isLoop,isRandom,elapsedTime,currentSeek,duration} = useSelector((state:RootState) => state.video)
   const videoIndex = useSelector((state:any) => state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
@@ -31,13 +33,16 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
   const onVolumeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value)/100
     dispatch(videoActions.setVolume(newValue))
-    newValue === 0 ? dispatch(videoActions.setIsMuted(true)) : dispatch(videoActions.setIsMuted(false))
   }
   const handleNextVideo = () => {
     if (videoIndex === videos.length -1 ) {
       dispatch(videoActions.currentIndex(0))
-    } 
-    dispatch(videoActions.currentIndex(videoIndex+1))
+    } else if (isRandom) {
+      let randomIndex = Math.floor(Math.random() * videos.length)
+      dispatch(videoActions.currentIndex(randomIndex))
+    } else {
+      dispatch(videoActions.currentIndex(videoIndex+1))
+    }
   }
   const handlePrevVideo = () => {
     if (videoIndex > 0) {
@@ -50,6 +55,12 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
   }
   const onMutedToggle = () => {
     dispatch(videoActions.setIsMuted(null))
+  }
+  const onToggleLoop = () => {
+    dispatch(videoActions.setIsLoop())
+  }
+  const onRandomToggle = () => {
+    dispatch(videoActions.setIsRandom())
   }
   const formDuration = (value:string) => {
     const minute = value?.slice(2,3)
@@ -76,6 +87,7 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
         width='100%'
         height='500px'
         volume={volume}
+        loop={isLoop}
         muted={isMuted}
         playing={isPlaying}
         onProgress = {(progress:any) => dispatch(videoActions.setElapsedTime(progress.playedSeconds))}
@@ -96,9 +108,11 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
         <button onClick={forwardBtn}>+5</button>
         <img src={Next} alt="next" onClick={handleNextVideo} style={{width :'30px', height : '30px'}}></img>
         <VolumeControls volume={volume * 100} isMuted={isMuted}>
-          {isMuted ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
+          {isMuted || volume * 100 === 0 ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
           <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
         </VolumeControls>
+        {isLoop ? <img src={Loop} alt='loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/> : <img src={NotLoop} alt='not loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/>}
+        <button onClick={onRandomToggle}>random</button>
       </div>
     </Info>
     </Detail>

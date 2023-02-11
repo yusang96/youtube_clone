@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { playlistActions } from '../store/playlistSlice';
 import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 import Video from './Video'
@@ -13,12 +12,8 @@ const PlayLists = () => {
   const dispatch = useDispatch<AppDispatch>()
   const videoIndex = useSelector((state:any)=>state.video.index)
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
-  const { friaMusic,friaData,friaPlaylist,harryData, harryInfo,berryData,berryInfo,bombingData,bombingInfo , allVideos} = useSelector((state:any) => state.playlist)
+  const {friaData,friaPlaylist,harryData, harryInfo,berryData,berryInfo,bombingData,bombingInfo,allVideos } = useSelector((state:any) => state.playlist)
   const API_KEY = process.env.REACT_APP_API_KEY;
-  const friaplaylistId = 'PLR2_QUSqS6X2FxXxOwq3uBRGj6luUoWBk'
-  const harryPlayListId ='PLK9rW7UvhqXY05BfQgtLx_e0DJEwAkSE7'
-  const berryPlayListId = 'PLIWPn8Vlm2Bm-FRmYH-rvG8EHhVU4fmLX'
-  const bombingPlayListId = 'PLdpjCrUcXsVQl5lQCUGsHs-yeM0X6hXNn'
   const formatIdString = (list:IVideo[]) => {
     let videoIdList:string[] = []
     list?.map((x) => (
@@ -32,29 +27,19 @@ const PlayLists = () => {
   const berryVideoIdList = formatIdString(berryData!)
   const bombingVideoIdList = formatIdString(bombingData!)
     useEffect(()=> {
-      const getVideoInfo = async (idLists:string) => {
-        if (idLists) {
-          const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
-          const data = await res.json();
-          const sortedVideo = await data?.items?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
-          dispatch(playlistActions.setMusic(sortedVideo))
-        }
-      }
-    dispatch(getHarryVideos(harryPlayListId))
-    dispatch(getHarryVideosInfo(harryVideoIdList))
-    dispatch(getBerryVideos(berryPlayListId))
-    dispatch(getBerryVideosInfo(berryVideoIdList))
-    dispatch(getBombingVideos(bombingPlayListId))
-    dispatch(getBombingVideosInfo(bombingVideoIdList))
-    dispatch(getFriaVideos(friaplaylistId))
-    dispatch(getFriaVideosInfo(friaVideoIdList))
-    getVideoInfo(friaVideoIdList!)
+      dispatch(getFriaVideos())
+      dispatch(getFriaVideosInfo(friaVideoIdList))
+      dispatch(getHarryVideos())
+      dispatch(getHarryVideosInfo(harryVideoIdList))
+      dispatch(getBerryVideos())
+      dispatch(getBerryVideosInfo(berryVideoIdList))
+      dispatch(getBombingVideos())
+      dispatch(getBombingVideosInfo(bombingVideoIdList))
   },[API_KEY, berryVideoIdList, bombingVideoIdList, dispatch, friaVideoIdList, harryVideoIdList])
-  let coverVideos = [...friaMusic].sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
+  let coverVideos = [...friaPlaylist,...harryInfo!,...berryInfo!,...bombingInfo!].sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
   useEffect(() => {
     dispatch(videoActions.setSelectedVideo(coverVideos[videoIndex]))
-  },[allVideos, coverVideos, dispatch, videoIndex])
-
+  },[coverVideos, dispatch, videoIndex])
   return (
     <App>
       <Content>

@@ -5,7 +5,9 @@ interface IVideoProps {
     selectedVideo : IVideo[]
     index : string
     isPlaying:boolean
+    isLoop : boolean
     isMuted : boolean
+    isRandom : boolean
     volume :number
     elapsedTime : string
     progressTime :number
@@ -18,6 +20,8 @@ const initialVideoState:IVideoProps = {
     index : '',
     isPlaying:false,
     isMuted:false,
+    isLoop : false,
+    isRandom : false,
     volume : 0.3,
     elapsedTime : '00:00',
     progressTime : 0,
@@ -31,8 +35,7 @@ const videoSlice = createSlice({
     reducers : {
         setSelectedVideo(state,action) {
             state.selectedVideo = action.payload
-        }
-        ,
+        },
         currentIndex(state, action) {
             state.index = action.payload
         },
@@ -41,6 +44,12 @@ const videoSlice = createSlice({
         },
         setIsMuted(state,action) {
             action.payload ? state.isMuted = action.payload : state.isMuted = !state.isMuted
+        },
+        setIsLoop(state) {
+            state.isLoop = !state.isLoop
+        },
+        setIsRandom(state) {
+            state.isRandom = !state.isRandom
         },
         setVolume(state,action) {
             state.volume = action.payload
