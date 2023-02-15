@@ -15,9 +15,10 @@ import { useDispatch } from 'react-redux/es/exports'
 import { videoActions } from '../store/videoSlice'
 import { RootState } from '../store/store'
 
-const Video = ({videos}:{videos:IVideo[]} ) => {
+const Video = () => {
   const dispatch = useDispatch()
   const {isPlaying,isMuted,volume,isLoop,isRandom,elapsedTime,currentSeek,duration} = useSelector((state:RootState) => state.video)
+  const {allVideos } = useSelector((state:any) => state.playlist)
   const videoIndex = useSelector((state:any) => state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
@@ -35,10 +36,10 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
     dispatch(videoActions.setVolume(newValue))
   }
   const handleNextVideo = () => {
-    if (videoIndex === videos.length -1 ) {
+    if (videoIndex === allVideos.length -1 ) {
       dispatch(videoActions.currentIndex(0))
     } else if (isRandom) {
-      let randomIndex = Math.floor(Math.random() * videos.length)
+      let randomIndex = Math.floor(Math.random() * allVideos.length)
       dispatch(videoActions.currentIndex(randomIndex))
     } else {
       dispatch(videoActions.currentIndex(videoIndex+1))
@@ -73,17 +74,17 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
     return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`; 
   }
   useEffect(() => {
-    dispatch(videoActions.setDuration(videos[videoIndex]?.contentDetails?.duration))
-    dispatch(videoActions.setDuration(formDuration(videos[videoIndex]?.contentDetails?.duration)))
+    dispatch(videoActions.setDuration(allVideos[videoIndex]?.contentDetails?.duration))
+    dispatch(videoActions.setDuration(formDuration(allVideos[videoIndex]?.contentDetails?.duration)))
     dispatch(videoActions.setProgressTime((parseInt(elapsedTime)/totalTime) * 100))
-  },[duration, elapsedTime, videoIndex, totalTime, videos, dispatch])
+  },[duration, elapsedTime, videoIndex, totalTime, allVideos, dispatch])
   let nowTime = formElapsed(parseInt(elapsedTime))
   return (
     <Detail>
-      <Thumbnails src={videos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
+      <Thumbnails src={allVideos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
       <ReactPlayer 
         ref={videoRef}
-        url={`https://www.youtube-nocookie.com/embed/${videos[videoIndex]?.id}`} 
+        url={`https://www.youtube-nocookie.com/embed/${allVideos[videoIndex]?.id}`} 
         width='100%'
         height='500px'
         volume={volume}
@@ -95,8 +96,8 @@ const Video = ({videos}:{videos:IVideo[]} ) => {
         style={{display : 'none'}}
         />
     <Info>
-      <h4>{videos[videoIndex]?.snippet?.title}</h4>
-      <h4>{videos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
+      <h4>{allVideos[videoIndex]?.snippet?.title}</h4>
+      <h4>{allVideos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
       <Progress>
         <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange}/>
         <p>{nowTime} | {duration}</p>

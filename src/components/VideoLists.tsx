@@ -1,12 +1,14 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
-const VideoLists = ({videos}:{videos :IVideo[]}) => {
+const VideoLists = () => {
+  const {allVideos } = useSelector((state:any) => state.playlist)
   return (
     <Lists>
-    {videos?.map((video:IVideo,index) => (
+    {allVideos?.map((video:IVideo,index:number) => (
       <VideoItem
         key={video.id}
         video={video}
