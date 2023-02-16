@@ -9,9 +9,7 @@ interface IVideoProps {
     isMuted : boolean
     isRandom : boolean
     volume :number
-    elapsedTime : string
-    progressTime :number
-    currentSeek :number
+    elapsedTime : number
     duration:number
 }
 
@@ -23,9 +21,7 @@ const initialVideoState:IVideoProps = {
     isLoop : false,
     isRandom : false,
     volume : 0.3,
-    elapsedTime : '00:00',
-    progressTime : 0,
-    currentSeek : 0,
+    elapsedTime : 0,
     duration : 0,
 }
 
@@ -56,12 +52,6 @@ const videoSlice = createSlice({
         },
         setElapsedTime(state,action) {
             state.elapsedTime = action.payload
-        },
-        setProgressTime(state,action) {
-            state.progressTime = action.payload
-        },
-        setCurrentSeek(state,action) {
-            state.currentSeek = action.payload
         },
         setDuration(state,action) {
             state.duration = action.payload

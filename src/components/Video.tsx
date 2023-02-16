@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { IVideo } from '../type/videoProps'
 import ReactPlayer from 'react-player/lazy'
 import MuteSpeaker from '../data/Mute_Icon.svg'
 import Speaker from '../data/Speaker_Icon.svg'
@@ -17,7 +16,7 @@ import { RootState } from '../store/store'
 
 const Video = () => {
   const dispatch = useDispatch()
-  const {isPlaying,isMuted,volume,isLoop,isRandom,elapsedTime,currentSeek,duration} = useSelector((state:RootState) => state.video)
+  const {isPlaying,isMuted,volume,isLoop,isRandom,elapsedTime,duration} = useSelector((state:RootState) => state.video)
   const {allVideos } = useSelector((state:any) => state.playlist)
   const videoIndex = useSelector((state:any) => state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
@@ -51,8 +50,12 @@ const Video = () => {
     }
   }
   const onSeekChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(videoActions.setCurrentSeek(parseInt(e.target.value)))
-    videoRef.current?.seekTo(currentSeek)
+    dispatch(videoActions.setElapsedTime(parseInt(e.target.value)))
+    videoRef.current?.seekTo(elapsedTime)
+  }
+  const onClickSeek = (e:React.MouseEvent<HTMLInputElement>) => {
+    dispatch(videoActions.setElapsedTime(parseInt(e.currentTarget.value)))
+    videoRef.current?.seekTo(elapsedTime)
   }
   const onMutedToggle = () => {
     dispatch(videoActions.setIsMuted(null))
@@ -68,30 +71,31 @@ const Video = () => {
     const seconds = parseInt(value?.slice(4,6))
     return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`;
   }
-  const formElapsed = (value:number) => {
+  const formatElapsed = (value:number) => {
+    if (value === 0 ) {
+      return '00:00'
+    }
     const minute = Math.floor(value / 60)
-    const seconds = Math.ceil(value - minute * 60)
+    const seconds = Math.floor(value - minute * 60)
     return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`; 
   }
   useEffect(() => {
-    dispatch(videoActions.setDuration(allVideos[videoIndex]?.contentDetails?.duration))
     dispatch(videoActions.setDuration(formDuration(allVideos[videoIndex]?.contentDetails?.duration)))
-    dispatch(videoActions.setProgressTime((parseInt(elapsedTime)/totalTime) * 100))
-  },[duration, elapsedTime, videoIndex, totalTime, allVideos, dispatch])
-  let nowTime = formElapsed(parseInt(elapsedTime))
+  },[duration, videoIndex, allVideos, dispatch])
+  let nowTime = formatElapsed(elapsedTime)
   return (
     <Detail>
       <Thumbnails src={allVideos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
       <ReactPlayer 
         ref={videoRef}
-        url={`https://www.youtube-nocookie.com/embed/${allVideos[videoIndex]?.id}`} 
+        url={`https://www.youtube-nocookie.com/embed/${allVideos[videoIndex]?.id}?showinfo=0&enablejsapi=1&origin=http://localhost:3000`} 
         width='100%'
         height='500px'
         volume={volume}
         loop={isLoop}
         muted={isMuted}
         playing={isPlaying}
-        onProgress = {(progress:any) => dispatch(videoActions.setElapsedTime(progress.playedSeconds))}
+        onProgress = {(progress) => dispatch(videoActions.setElapsedTime(progress.playedSeconds))}
         onEnded ={handleNextVideo}
         style={{display : 'none'}}
         />
@@ -99,7 +103,7 @@ const Video = () => {
       <h4>{allVideos[videoIndex]?.snippet?.title}</h4>
       <h4>{allVideos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
       <Progress>
-        <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange}/>
+        <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange} onClick={onClickSeek}/>
         <p>{nowTime} | {duration}</p>
       </Progress>
       <div style={{display:'flex'}}>
@@ -130,15 +134,6 @@ const Detail = styled.div`
 
 const Info = styled.div`
   white-space: pre-wrap;
-`
-const ProgressBar = styled.div`
-  width: 100%;
-  height: 7px;
-  background-color: grey;
-`
-const ProgressGauge = styled.div`
-  height: 7px;
-  background-color: red;
 `
 
 const VolumeControls = styled.div<{volume : number; isMuted : boolean}>`
