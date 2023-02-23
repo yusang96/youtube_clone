@@ -1,46 +1,49 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import styled from "styled-components"
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getFriaPlaylistInfo, getFriaPlaylists, getLiveClip, getLiveClipInfo } from '../store/playlistSlice';
 import { IVideo } from '../type/videoProps';
-
+import { AppDispatch } from '../store/store';
+import Weekly from '../components/Weekly';
 
 function Home() {
+  const dispatch = useDispatch<AppDispatch>()
+  const {allData,clipData} = useSelector((state:any) => state.playlist)
   const API_KEY = process.env.REACT_APP_API_KEY;
-  const [videos , setVideos] = useState([]);
-  useEffect(()=>{
-    const getVideos = async () => {
-      const api = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&regionCode=KR&chart=mostPopular&maxResults=12&key=${API_KEY}`)
-      const data = await api.json();
-      console.log(data.items);
-      setVideos(data.items);
-    }
-    getVideos();
-  },[API_KEY])
+  const formatIdString = (list:IVideo[]) => {
+    let videoIdList:string[] = []
+    list?.map((x) => (
+          videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
+        ));
+    let videoIdString = videoIdList?.join("");
+    return videoIdString
+  }
+  const friaPlaylistId = formatIdString(allData!)
+  const liveCliplistId = formatIdString(clipData!)
+  useEffect(()=> {
+    dispatch(getFriaPlaylists())
+    dispatch(getFriaPlaylistInfo(friaPlaylistId))
+    dispatch(getLiveClip())
+    dispatch(getLiveClipInfo(liveCliplistId))
+  },[API_KEY, dispatch, friaPlaylistId, liveCliplistId])
   const date = new Date();
-  console.log(date);
     return (
-        <Grid>
-          {videos.map((video:IVideo)=> {
-          return ( 
-            <Video key={video.id} >
-              <iframe width='500' height='300' src={`https://www.youtube-nocookie.com/embed/${video.id}`} allowFullScreen  
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  title="Embedded youtube"></iframe>
-              <h3>{video.snippet.title}</h3>
-              <Link to={`/channel/${video.snippet.channelId}`}>{video.snippet.channelTitle}</Link>
-              <p>{video.snippet.publishedAt.slice(0,10)}</p>
-              <p>조회수 : {video.statistics.viewCount}</p>
-            </Video>
-          )
-        })}
-        </Grid>
+      <Main>
+        <Weekly/>
+      </Main>
+      // <Grid>
+      //   <VideoLists/>
+      // </Grid>
     )
 }
+const Main = styled.div`
+  margin-top : 60px;
+`
 const Grid = styled.div`
     margin-top : 60px;
     display : grid;
-    grid-template-columns : repeat(3 , minmax(20rem,1fr));
+    grid-template-columns : repeat(4 , minmax(20rem,1fr));
     grid-gap : 3rem;
     @media (max-width:768px) {
       grid-template-columns : repeat(2 , minmax(20rem,1fr));

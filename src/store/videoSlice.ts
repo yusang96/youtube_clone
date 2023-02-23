@@ -3,11 +3,13 @@ import { IVideo } from '../type/videoProps';
 
 interface IVideoProps {
     selectedVideo : IVideo[]
-    index : string
+    wantedVideo :IVideo[]
+    index : number
     isPlaying:boolean
     isLoop : boolean
     isMuted : boolean
     isRandom : boolean
+    isChecked : boolean
     volume :number
     elapsedTime : number
     duration:number
@@ -15,11 +17,13 @@ interface IVideoProps {
 
 const initialVideoState:IVideoProps = {
     selectedVideo : [],
-    index : '',
+    wantedVideo : [],
+    index : 0,
     isPlaying:false,
     isMuted:false,
     isLoop : false,
     isRandom : false,
+    isChecked :false,
     volume : 0.3,
     elapsedTime : 0,
     duration : 0,
@@ -56,6 +60,14 @@ const videoSlice = createSlice({
         setDuration(state,action) {
             state.duration = action.payload
         },
+        setWantedVideo(state,action) {
+            state.isChecked = action.payload.check
+            state.wantedVideo = state.wantedVideo.concat(action.payload.video)
+        },
+        setRemoveVideo(state,action) {
+            state.isChecked = action.payload.check
+            state.wantedVideo = state.wantedVideo.filter(video => video.id !== action.payload.video.id)
+        }
     }
 })
 

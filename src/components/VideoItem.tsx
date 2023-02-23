@@ -1,34 +1,48 @@
 import React, { useCallback } from 'react'
-import { useDispatch } from 'react-redux/es/exports';
+import { useDispatch, useSelector } from 'react-redux/es/exports';
 import styled from 'styled-components';
 import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 
 const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
     const dispatch = useDispatch()
+    const {allVideos } = useSelector((state:any) => state.playlist)
     const onClick = useCallback(() => {
       dispatch(videoActions.currentIndex(idx))
     }, [dispatch, idx]);
+    const onCheckBtn = (e:React.ChangeEvent<HTMLInputElement>) => {
+      console.log(e.target.checked)
+      console.log(video)
+      if (e.target.checked) {
+        dispatch(videoActions.setWantedVideo({check : e.target.checked , video}))
+      } else {
+        dispatch(videoActions.setRemoveVideo({check : e.target.checked , video}))
+      }
+    }
     return (
-      <Container onClick={onClick}>
-        <Video >
-          <Thumnail
-            src={video?.snippet?.thumbnails?.maxres.url}
-            alt="video thumbnail"
-          />
-          <MetaDiv>
-            <Title>{video.snippet.title}</Title>
-            <Channel>{video.snippet.channelTitle}</Channel>
-            <h5>{video.statistics.viewCount}회</h5>
-          </MetaDiv>
-        </Video>
-      </Container>
+      <>
+        <input type='checkbox' onChange={onCheckBtn} />
+        <Container onClick={onClick}>
+          <Video>
+            <Thumnail
+              src={video?.snippet?.thumbnails?.maxres.url}
+              alt="video thumbnail"
+            />
+            <MetaDiv>
+              <Title>{video.snippet.title}</Title>
+              <Channel>{video.snippet.channelTitle}</Channel>
+              <h5>{video.statistics.viewCount}회</h5>
+            </MetaDiv>
+          </Video>
+        </Container>
+      </>
     );
   }
 
 const Container = styled.li`
   width: 100%;
-  padding: 0.2em;
+  margin-bottom: 10px;
+  list-style: none;
 `
 const Video = styled.div`
   display: flex;

@@ -7,12 +7,13 @@ import Video from './Video'
 import VideoLists from './VideoLists'
 import { getFriaPlaylistInfo,getFriaPlaylists} from '../store/playlistSlice';
 import { AppDispatch } from '../store/store';
+import { Link } from 'react-router-dom';
 
 const PlayLists = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const {allData,allVideos} = useSelector((state:any) => state.playlist)
   const videoIndex = useSelector((state:any)=>state.video.index)
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
-  const {allData,allVideos } = useSelector((state:any) => state.playlist)
   const API_KEY = process.env.REACT_APP_API_KEY;
   const formatIdString = (list:IVideo[]) => {
     let videoIdList:string[] = []
@@ -26,11 +27,10 @@ const PlayLists = () => {
     useEffect(()=> {
       dispatch(getFriaPlaylists())
       dispatch(getFriaPlaylistInfo(friaPlaylistId))
-  },[API_KEY ,dispatch, friaPlaylistId])
+  },[API_KEY, dispatch, friaPlaylistId])
   useEffect(() => {
     dispatch(videoActions.setSelectedVideo(allVideos[videoIndex]))
   },[allVideos, dispatch, videoIndex])
-  console.log(allVideos);
   return (
     <App>
       <Content>

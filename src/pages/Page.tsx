@@ -8,6 +8,7 @@ import Profile from "./Profile"
 import { IUser } from "../type/userType"
 import PlayLists from "../components/PlayLists"
 import Charts from "../components/Charts"
+import PlayVideo from "../components/PlayVideo"
 
 
 function Page({userObj ,refreshUser}:IUser) {
@@ -20,6 +21,7 @@ function Page({userObj ,refreshUser}:IUser) {
             <Route path="/profile" element={<Profile userObj={userObj} refreshUser={refreshUser}/>}/>
             <Route path='/playlist' element={<PlayLists/>}/>
             <Route path='/charts' element={<Charts/>}/>
+            <Route path='/playing' element={<PlayVideo/>}/>
         </Routes>
     )
 }

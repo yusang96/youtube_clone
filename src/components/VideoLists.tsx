@@ -8,12 +8,12 @@ const VideoLists = () => {
   const {allVideos } = useSelector((state:any) => state.playlist)
   return (
     <Lists>
-    {allVideos?.map((video:IVideo,index:number) => (
-      <VideoItem
-        key={video.id}
-        video={video}
-        idx ={index}
-      />
+      {allVideos?.map((video:IVideo,index:number) => (
+        <VideoItem
+          video={video}
+          idx ={index}
+          key={video.id}
+        />
     ))}
   </Lists>
   )
