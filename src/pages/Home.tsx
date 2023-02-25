@@ -6,6 +6,7 @@ import { getFriaPlaylistInfo, getFriaPlaylists, getLiveClip, getLiveClipInfo } f
 import { IVideo } from '../type/videoProps';
 import { AppDispatch } from '../store/store';
 import Weekly from '../components/Weekly';
+import VideoLists from '../components/VideoLists';
 
 function Home() {
   const dispatch = useDispatch<AppDispatch>()

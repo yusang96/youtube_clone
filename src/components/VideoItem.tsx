@@ -1,12 +1,14 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux/es/exports';
 import styled from 'styled-components';
 import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 
-const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
+const VideoItem =   ({video , idx,count} : {video : IVideo,idx:number,count?:string}) => {
     const dispatch = useDispatch()
     const {allVideos } = useSelector((state:any) => state.playlist)
+    const [nowCount ,setNowCount ] =useState(count)
+    console.log(nowCount)
     const onClick = useCallback(() => {
       dispatch(videoActions.currentIndex(idx))
     }, [dispatch, idx]);
@@ -19,6 +21,15 @@ const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
         dispatch(videoActions.setRemoveVideo({check : e.target.checked , video}))
       }
     }
+    // useEffect(() => {
+    //   setTimeout(() => {
+    //     let newCount=count
+    //     console.log(newCount)
+    //     let dis = parseInt(newCount as string) - parseInt(nowCount as string)
+    //     console.log(dis)
+    //   }, 3000);
+    // },[count, nowCount])
+
     return (
       <>
         <input type='checkbox' onChange={onCheckBtn} />

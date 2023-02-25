@@ -13,6 +13,7 @@ const VideoLists = () => {
           video={video}
           idx ={index}
           key={video.id}
+          count = {video.statistics.viewCount}
         />
     ))}
   </Lists>

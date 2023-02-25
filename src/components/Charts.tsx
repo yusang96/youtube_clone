@@ -10,7 +10,7 @@ import VideoLists from './VideoLists'
 const Charts = () => {
   const dispatch = useDispatch<AppDispatch>()
   const {wantedVideo } = useSelector((state:any) => state.video)
-  const {allData } = useSelector((state:any) => state.playlist)
+  const {allData,allVideos } = useSelector((state:any) => state.playlist)
   const API_KEY = process.env.REACT_APP_API_KEY;
   const formatIdString = (list:IVideo[]) => {
     let videoIdList:string[] = []
@@ -28,10 +28,11 @@ const Charts = () => {
   const onClick = () => {
     dispatch(playlistActions.setSelectedVideos(wantedVideo))
   }
+  console.log(allVideos)
   return (
     <App>
       <Link to='/playlist'><button>전체 재생</button></Link>
-      {wantedVideo.length > 0 ? <Link to='/playing' onClick={onClick}><button>내 목록 {wantedVideo.length}</button></Link> : ''}
+      {wantedVideo.length > 0 ? <Link to='/mylist' onClick={onClick}><button>내 목록 {wantedVideo.length}</button></Link> : ''}
       <Content>
         <ChartList>
           <VideoLists/>
