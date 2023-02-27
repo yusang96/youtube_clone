@@ -4,7 +4,7 @@ import { IVideo } from '../type/videoProps';
 interface IVideoProps {
     selectedVideo : IVideo[]
     wantedVideo :IVideo[]
-    index : number
+    index : string | number
     isPlaying:boolean
     isLoop : boolean
     isMuted : boolean
@@ -18,7 +18,7 @@ interface IVideoProps {
 const initialVideoState:IVideoProps = {
     selectedVideo : [],
     wantedVideo : [],
-    index : 0,
+    index : '',
     isPlaying:false,
     isMuted:false,
     isLoop : false,

@@ -4,35 +4,22 @@ import styled from 'styled-components';
 import { videoActions } from '../store/videoSlice';
 import { IVideo } from '../type/videoProps';
 
-const VideoItem =   ({video , idx,count} : {video : IVideo,idx:number,count?:string}) => {
+const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
     const dispatch = useDispatch()
-    const {allVideos } = useSelector((state:any) => state.playlist)
-    const [nowCount ,setNowCount ] =useState(count)
-    console.log(nowCount)
+    const {wantedVideo } = useSelector((state:any) => state.video)
     const onClick = useCallback(() => {
       dispatch(videoActions.currentIndex(idx))
     }, [dispatch, idx]);
     const onCheckBtn = (e:React.ChangeEvent<HTMLInputElement>) => {
-      console.log(e.target.checked)
-      console.log(video)
       if (e.target.checked) {
         dispatch(videoActions.setWantedVideo({check : e.target.checked , video}))
       } else {
         dispatch(videoActions.setRemoveVideo({check : e.target.checked , video}))
       }
     }
-    // useEffect(() => {
-    //   setTimeout(() => {
-    //     let newCount=count
-    //     console.log(newCount)
-    //     let dis = parseInt(newCount as string) - parseInt(nowCount as string)
-    //     console.log(dis)
-    //   }, 3000);
-    // },[count, nowCount])
-
     return (
       <>
-        <input type='checkbox' onChange={onCheckBtn} />
+        <input type='checkbox' onChange={onCheckBtn} checked={wantedVideo?.map((video:any) => video.id).includes(video?.id) ? true : false}/>
         <Container onClick={onClick}>
           <Video>
             <Thumnail

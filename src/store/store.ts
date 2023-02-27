@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import playlistSlice from "./playlistSlice";
 import videoSlice from "./videoSlice";
 
-
 export const store = configureStore({
     reducer : {
         video : videoSlice,

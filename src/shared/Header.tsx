@@ -30,7 +30,8 @@ function Header({isLogin , userObj}:IUser) {
           <button>로그인</button>
         </Link> }
         <Link to='/charts' style={{marginLeft : '10px'}}>CHARTS</Link>
-        <Link to='/playlist' style={{marginLeft : '10px'}}>PLAY LIST</Link>
+        <Link to='/cover' style={{marginLeft : '10px'}}>COVER</Link>
+        <Link to='/liveclip' style={{marginLeft : '10px'}}>LIVE CLIP</Link>
         <Link to='/artist' style={{marginLeft : '10px'}}>ARTIST</Link>
         <Link to='/album' style={{marginLeft : '10px'}}>ALBUM</Link>
       </Tab>

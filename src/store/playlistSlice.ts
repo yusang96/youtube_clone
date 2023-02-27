@@ -5,9 +5,7 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 const playlistFria = 'PLR2_QUSqS6X0vTlLq8R-eDSA7Ea1hpsWr'
 const liveclip = 'PLBgSCwfdu8IMT2MoCc0qEKAa4Wi2h5_X2'
 const friaplaylistId = 'PLR2_QUSqS6X2FxXxOwq3uBRGj6luUoWBk'
-const harryPlayListId ='PLK9rW7UvhqXY05BfQgtLx_e0DJEwAkSE7'
-const berryPlayListId = 'PLIWPn8Vlm2Bm-FRmYH-rvG8EHhVU4fmLX'
-const bombingPlayListId = 'PLdpjCrUcXsVQl5lQCUGsHs-yeM0X6hXNn'
+
 
 export const getFriaPlaylists = createAsyncThunk('get/friaPlaylists',
     async () => {
@@ -79,10 +77,22 @@ export const getLiveClipInfo = createAsyncThunk('get/clipInfo' ,
             return sortedVideo
           }
     })
+export const getFriaWeeklyInfo = createAsyncThunk('get/weeklyInfo' ,
+    async (idLists:string ) => {
+        if (idLists) {
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
+            const data = await res.json();
+            const sortedVideo = await data?.items?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
+            return sortedVideo
+          }
+    })
 interface IPlaylistProps {
-    loading : boolean,
+    sort : string,
     allData : IVideo[],
     allVideos : IVideo[],
+    prevData : IVideo[],
+    weeklyData : IVideo[],
+    coverVideo : IVideo[],
     friaMusic : IVideo[],
     friaData : IVideo[],
     friaPlaylist : IVideo[],
@@ -91,9 +101,12 @@ interface IPlaylistProps {
 }
 
 const initialPlaylistState:IPlaylistProps = {
-    loading : false,
+    sort : '누적순',
     allData : [],
     allVideos : [],
+    prevData : [],
+    weeklyData : [],
+    coverVideo : [],
     friaMusic : [],
     friaData : [],
     friaPlaylist : [],
@@ -105,8 +118,20 @@ const playlistSlice = createSlice({
     name : 'playlist',
     initialState : initialPlaylistState,
     reducers : {
+        setAllVideos(state,action) {
+            state.allVideos = action.payload
+        },
+        setPrevData(state,action) {
+            state.prevData = action.payload
+        },
+        setWeeklyData(state,action) {
+            state.weeklyData = action.payload
+        },
         setSelectedVideos(state,action) {
             state.allVideos = action.payload
+        },
+        setSorted(state,action) {
+            state.sort = action.payload
         }
     },
     extraReducers: builder => {
@@ -116,14 +141,21 @@ const playlistSlice = createSlice({
         builder.addCase(getFriaPlaylistInfo.fulfilled, (state, { payload }) => {
             if (payload) {
                 state.allVideos = payload
+                state.coverVideo = payload
+            }
+        });
+        builder.addCase(getFriaWeeklyInfo.fulfilled, (state, { payload }) => {
+            if (payload) {
+                state.weeklyData = payload
             }
         });
         builder.addCase(getLiveClip.fulfilled, (state, { payload }) => {
             state.clipData = payload
         });
-        builder.addCase(getLiveClipInfo.fulfilled, (state:IPlaylistProps, { payload }) => {         
+        builder.addCase(getLiveClipInfo.fulfilled , (state:IPlaylistProps, { payload }) => {         
             if (payload) {
-                state.allVideos = state.allVideos.concat(payload)
+                // state.allVideos = state.allVideos.concat(payload)
+                state.liveClips = payload
             }
         });
     },

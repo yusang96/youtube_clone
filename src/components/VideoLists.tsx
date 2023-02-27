@@ -1,11 +1,17 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+import { playlistActions } from '../store/playlistSlice'
 import { IVideo } from '../type/videoProps'
 import VideoItem from './VideoItem'
 
 const VideoLists = () => {
-  const {allVideos } = useSelector((state:any) => state.playlist)
+  const dispatch = useDispatch()
+  const {allVideos,prevData} = useSelector((state:any) => state.playlist)
+  useEffect(() => {
+    dispatch(playlistActions.setPrevData(allVideos))
+  },[])
+  console.log(prevData)
   return (
     <Lists>
       {allVideos?.map((video:IVideo,index:number) => (
@@ -13,7 +19,6 @@ const VideoLists = () => {
           video={video}
           idx ={index}
           key={video.id}
-          count = {video.statistics.viewCount}
         />
     ))}
   </Lists>

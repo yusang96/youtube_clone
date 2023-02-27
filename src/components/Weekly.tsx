@@ -1,44 +1,48 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import {useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { AppDispatch } from '../store/store'
 import { IVideo } from '../type/videoProps'
 import Play from '../data/play.svg'
 
-const Weekly = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const {allVideos} = useSelector((state:any) => state.playlist)
-  console.log(allVideos)
-  return (
-    <Grid>
-      {allVideos?.map((video:IVideo,index:number) => {
-        if (index < 10) {
-          return ( 
-          <Video key={video.etag} svgurl={Play}>
-            <Thumnail src={video?.snippet?.thumbnails?.maxres.url} alt="video thumbnail"/>
-            <p>{video.snippet.channelTitle}</p>
-            <p>{video.snippet.title}</p>
-          </Video>
-          )}
-      })}
-    </Grid>
 
+const Weekly = () => {
+  const {allVideos} = useSelector((state:any) => state.playlist)
+  return (
+    <>
+      <Grid>
+        {allVideos?.map((video:IVideo,index:number) => {
+          if (index < 10) {
+            return ( 
+            <Video key={video.etag} svgurl={Play}>
+              <Thumnail src={video?.snippet?.thumbnails?.maxres.url} alt="video thumbnail"/>
+              <p>{video.snippet.channelTitle}</p>
+              <p>{video.snippet.title}</p>
+            </Video>
+            )}
+        })}
+      </Grid>
+      {allVideos?.map((video:IVideo,index:number) => {
+          if (index > 10 && index <20) {
+            return ( 
+              <Video key={video.etag} svgurl={Play}>
+                <p>{video.snippet.title}</p>
+              </Video>
+            )}
+        })}
+    </>
   )
 }
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction : column;
-`
+
 const Grid = styled.div`
-    display : grid;
-    grid-template-columns : repeat(5 , minmax(20rem,1fr));
-    grid-gap : 3rem;
-    @media (max-width:768px) {
-      grid-template-columns : repeat(2 , minmax(20rem,1fr));
-      grid-gap : 30px;
-    }
-    list-style: none;
-    padding : 40px;
+  display : grid;
+  grid-template-columns : repeat(5 , 1fr);
+  grid-gap : 3rem;
+  @media (max-width:768px) {
+    grid-template-columns : repeat(2 , minmax(20rem,1fr));
+    grid-gap : 30px;
+  }
+  list-style: none;
+  padding : 40px;
 `;
 
 const Video = styled.div<{svgurl:string}>`

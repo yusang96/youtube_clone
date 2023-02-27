@@ -1,41 +1,41 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { getFriaPlaylistInfo, getFriaPlaylists, playlistActions } from '../store/playlistSlice'
 import { AppDispatch } from '../store/store'
+import { videoActions } from '../store/videoSlice'
 import { IVideo } from '../type/videoProps'
 import VideoLists from './VideoLists'
+import WeeklyCharts from './WeeklyCharts'
 
 const Charts = () => {
   const dispatch = useDispatch<AppDispatch>()
   const {wantedVideo } = useSelector((state:any) => state.video)
-  const {allData,allVideos } = useSelector((state:any) => state.playlist)
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  const formatIdString = (list:IVideo[]) => {
-    let videoIdList:string[] = []
-    list?.map((x) => (
-          videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
-        ));
-    let videoIdString = videoIdList?.join("");
-    return videoIdString
-  }
-  const friaPlaylistId = formatIdString(allData!)
-    useEffect(()=> {
-      dispatch(getFriaPlaylists())
-      dispatch(getFriaPlaylistInfo(friaPlaylistId))
-  },[API_KEY ,dispatch, friaPlaylistId])
+  const {liveClips,coverVideo,allVideos,sort } = useSelector((state:any) => state.playlist)
+  useEffect(() => {
+    dispatch(videoActions.currentIndex(''))
+    dispatch(playlistActions.setAllVideos([ ...coverVideo , ...liveClips]))
+  },[coverVideo, dispatch, liveClips])
   const onClick = () => {
     dispatch(playlistActions.setSelectedVideos(wantedVideo))
   }
-  console.log(allVideos)
+  const onAllClick = () => {
+    dispatch(playlistActions.setSelectedVideos(allVideos))
+  }
+  const onSortedBtn = useCallback(() => {
+    sort === '누적순' ? dispatch(playlistActions.setSorted('주간순')) : dispatch(playlistActions.setSorted('누적순'))
+  },[dispatch, sort])
   return (
     <App>
-      <Link to='/playlist'><button>전체 재생</button></Link>
+      <Link to='/playlist' onClick={onAllClick}><button>전체 재생</button></Link>
+      <button onClick={onSortedBtn}>주간</button>
+      <button onClick={onSortedBtn}>누적</button>
       {wantedVideo.length > 0 ? <Link to='/mylist' onClick={onClick}><button>내 목록 {wantedVideo.length}</button></Link> : ''}
       <Content>
         <ChartList>
-          <VideoLists/>
+          {sort ==='누적순' && <VideoLists/>}
+          {sort === '주간순' && <WeeklyCharts/>}
         </ChartList>
       </Content>
     </App>

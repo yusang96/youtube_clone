@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import styled from "styled-components"
 import { useDispatch, useSelector } from 'react-redux';
-import { getFriaPlaylistInfo, getFriaPlaylists, getLiveClip, getLiveClipInfo } from '../store/playlistSlice';
+import { getFriaPlaylistInfo, getFriaPlaylists, getLiveClip, getLiveClipInfo, playlistActions } from '../store/playlistSlice';
 import { IVideo } from '../type/videoProps';
 import { AppDispatch } from '../store/store';
 import Weekly from '../components/Weekly';
@@ -10,8 +10,7 @@ import VideoLists from '../components/VideoLists';
 
 function Home() {
   const dispatch = useDispatch<AppDispatch>()
-  const {allData,clipData} = useSelector((state:any) => state.playlist)
-  const API_KEY = process.env.REACT_APP_API_KEY;
+  const {allData,clipData,coverVideo,liveClips} = useSelector((state:any) => state.playlist)
   const formatIdString = (list:IVideo[]) => {
     let videoIdList:string[] = []
     list?.map((x) => (
@@ -27,8 +26,10 @@ function Home() {
     dispatch(getFriaPlaylistInfo(friaPlaylistId))
     dispatch(getLiveClip())
     dispatch(getLiveClipInfo(liveCliplistId))
-  },[API_KEY, dispatch, friaPlaylistId, liveCliplistId])
-  const date = new Date();
+  },[dispatch, friaPlaylistId, liveCliplistId])
+  useEffect(() => {
+    dispatch(playlistActions.setAllVideos([...coverVideo , ...liveClips]))
+  },[coverVideo, dispatch, liveClips])
     return (
       <Main>
         <Weekly/>

@@ -1,22 +1,21 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { videoActions } from '../store/videoSlice';
-import { IVideo } from '../type/videoProps';
+import { useDispatch, useSelector } from 'react-redux'
+import styled from 'styled-components'
+import { getFriaPlaylistInfo, getFriaPlaylists, playlistActions } from '../store/playlistSlice'
+import { videoActions } from '../store/videoSlice'
 import Video from './Video'
 import VideoLists from './VideoLists'
-import { getFriaPlaylistInfo,getFriaPlaylists} from '../store/playlistSlice';
-import { AppDispatch } from '../store/store';
 
-const PlayLists = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const {allVideos} = useSelector((state:any) => state.playlist)
-  const videoIndex = useSelector((state:any)=>state.video.index)
+const Cover = () => {
+  const dispatch = useDispatch()
+  const {coverVideo,allVideos} = useSelector((state:any) => state.playlist)
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
-  console.log(selectedVideo)
+  const videoIndex = useSelector((state:any)=>state.video.index)
   useEffect(() => {
-    dispatch(videoActions.setSelectedVideo(allVideos[videoIndex]))
-  },[allVideos, dispatch, videoIndex])
+    dispatch(videoActions.setSelectedVideo(coverVideo[videoIndex]))
+    dispatch(playlistActions.setSelectedVideos(coverVideo))
+  },[coverVideo, dispatch, videoIndex])
+  console.log(allVideos)
   return (
     <App>
       <Content>
@@ -32,6 +31,7 @@ const PlayLists = () => {
     </App>
   )
 }
+
 const App = styled.div`
   margin-top: 60px;
   max-width : 100%;
@@ -57,5 +57,4 @@ const List = styled.div`
       border-radius:6px;
     }
 `
-
-export default PlayLists
+export default Cover
