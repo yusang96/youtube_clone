@@ -12,6 +12,7 @@ const Cover = () => {
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
   const videoIndex = useSelector((state:any)=>state.video.index)
   useEffect(() => {
+    dispatch(videoActions.currentIndex(''))
     dispatch(videoActions.setSelectedVideo(coverVideo[videoIndex]))
     dispatch(playlistActions.setSelectedVideos(coverVideo))
   },[coverVideo, dispatch, videoIndex])

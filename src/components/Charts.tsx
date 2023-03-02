@@ -2,17 +2,16 @@ import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { getFriaPlaylistInfo, getFriaPlaylists, playlistActions } from '../store/playlistSlice'
+import {  playlistActions } from '../store/playlistSlice'
 import { AppDispatch } from '../store/store'
 import { videoActions } from '../store/videoSlice'
-import { IVideo } from '../type/videoProps'
 import VideoLists from './VideoLists'
 import WeeklyCharts from './WeeklyCharts'
 
 const Charts = () => {
   const dispatch = useDispatch<AppDispatch>()
   const {wantedVideo } = useSelector((state:any) => state.video)
-  const {liveClips,coverVideo,allVideos,sort } = useSelector((state:any) => state.playlist)
+  const {liveClips,coverVideo,allVideos,sort} = useSelector((state:any) => state.playlist)
   useEffect(() => {
     dispatch(videoActions.currentIndex(''))
     dispatch(playlistActions.setAllVideos([ ...coverVideo , ...liveClips]))

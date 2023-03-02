@@ -7,11 +7,7 @@ import VideoItem from './VideoItem'
 
 const VideoLists = () => {
   const dispatch = useDispatch()
-  const {allVideos,prevData} = useSelector((state:any) => state.playlist)
-  useEffect(() => {
-    dispatch(playlistActions.setPrevData(allVideos))
-  },[])
-  console.log(prevData)
+  const {allVideos} = useSelector((state:any) => state.playlist)
   return (
     <Lists>
       {allVideos?.map((video:IVideo,index:number) => (

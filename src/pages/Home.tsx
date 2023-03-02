@@ -6,7 +6,6 @@ import { getFriaPlaylistInfo, getFriaPlaylists, getLiveClip, getLiveClipInfo, pl
 import { IVideo } from '../type/videoProps';
 import { AppDispatch } from '../store/store';
 import Weekly from '../components/Weekly';
-import VideoLists from '../components/VideoLists';
 
 function Home() {
   const dispatch = useDispatch<AppDispatch>()
@@ -26,18 +25,19 @@ function Home() {
     dispatch(getFriaPlaylistInfo(friaPlaylistId))
     dispatch(getLiveClip())
     dispatch(getLiveClipInfo(liveCliplistId))
-  },[dispatch, friaPlaylistId, liveCliplistId])
+  },[ dispatch, friaPlaylistId, liveCliplistId])
   useEffect(() => {
     dispatch(playlistActions.setAllVideos([...coverVideo , ...liveClips]))
+    localStorage.setItem('todayData' , JSON.stringify([...coverVideo , ...liveClips]))
   },[coverVideo, dispatch, liveClips])
-    return (
-      <Main>
-        <Weekly/>
-      </Main>
-      // <Grid>
-      //   <VideoLists/>
-      // </Grid>
-    )
+  return (
+    <Main>
+      <Weekly/>
+    </Main>
+    // <Grid>
+    //   <VideoLists/>
+    // </Grid>
+  )
 }
 const Main = styled.div`
   margin-top : 60px;

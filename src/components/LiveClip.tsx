@@ -14,6 +14,7 @@ const LiveClip = () => {
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
   const videoIndex = useSelector((state:any)=>state.video.index)
   useEffect(() => {
+    dispatch(videoActions.currentIndex(''))
     dispatch(videoActions.setSelectedVideo(liveClips[videoIndex]))
     dispatch(playlistActions.setSelectedVideos(liveClips))
   },[dispatch, liveClips, videoIndex])

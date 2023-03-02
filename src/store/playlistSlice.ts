@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IVideo } from "../type/videoProps";
+import moment from "moment";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 const playlistFria = 'PLR2_QUSqS6X0vTlLq8R-eDSA7Ea1hpsWr'
@@ -77,17 +78,9 @@ export const getLiveClipInfo = createAsyncThunk('get/clipInfo' ,
             return sortedVideo
           }
     })
-export const getFriaWeeklyInfo = createAsyncThunk('get/weeklyInfo' ,
-    async (idLists:string ) => {
-        if (idLists) {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics${idLists}&key=${API_KEY}`)
-            const data = await res.json();
-            const sortedVideo = await data?.items?.sort((a:IVideo,b:IVideo) => parseInt(b.statistics.viewCount)-parseInt(a.statistics.viewCount))
-            return sortedVideo
-          }
-    })
 interface IPlaylistProps {
     sort : string,
+    dailyTime : string,
     allData : IVideo[],
     allVideos : IVideo[],
     prevData : IVideo[],
@@ -102,6 +95,7 @@ interface IPlaylistProps {
 
 const initialPlaylistState:IPlaylistProps = {
     sort : '누적순',
+    dailyTime : moment().format('HH:mm:ss'),
     allData : [],
     allVideos : [],
     prevData : [],
@@ -132,6 +126,9 @@ const playlistSlice = createSlice({
         },
         setSorted(state,action) {
             state.sort = action.payload
+        },
+        setTimes(state,action) {
+            state.dailyTime = action.payload
         }
     },
     extraReducers: builder => {
@@ -142,11 +139,6 @@ const playlistSlice = createSlice({
             if (payload) {
                 state.allVideos = payload
                 state.coverVideo = payload
-            }
-        });
-        builder.addCase(getFriaWeeklyInfo.fulfilled, (state, { payload }) => {
-            if (payload) {
-                state.weeklyData = payload
             }
         });
         builder.addCase(getLiveClip.fulfilled, (state, { payload }) => {
