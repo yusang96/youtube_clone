@@ -6,7 +6,8 @@ import { IVideo } from '../type/videoProps';
 
 const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
     const dispatch = useDispatch()
-    const {wantedVideo } = useSelector((state:any) => state.video)
+    const {wantedVideo,selectedVideo} = useSelector((state:any) => state.video)
+    const {allVideos} = useSelector((state:any) => state.playlist)
     const onClick = useCallback(() => {
       dispatch(videoActions.currentIndex(idx))
     }, [dispatch, idx]);
@@ -17,53 +18,58 @@ const VideoItem =   ({video , idx} : {video : IVideo,idx:number}) => {
         dispatch(videoActions.setRemoveVideo({check : e.target.checked , video}))
       }
     }
+    const isActive = (idx:number) => {
+      return selectedVideo?.id === allVideos[idx]?.id ? 'active' : ''
+    };
     return (
-      <>
-        <input type='checkbox' onChange={onCheckBtn} checked={wantedVideo?.map((video:any) => video.id).includes(video?.id) ? true : false}/>
-        <Container onClick={onClick}>
-          <Video>
-            <Thumnail
-              src={video?.snippet?.thumbnails?.maxres.url}
-              alt="video thumbnail"
-            />
-            <MetaDiv>
-              <Title>{video.snippet.title}</Title>
-              <Channel>{video.snippet.channelTitle}</Channel>
-              <h5>{video.statistics.viewCount}회</h5>
-            </MetaDiv>
-          </Video>
-        </Container>
-      </>
+      <Container onClick={onClick}>
+        <Video className={isActive(idx)}>
+          {/* <Thumnail
+            src={video?.snippet?.thumbnails?.maxres?.url}
+            alt="video thumbnail"
+          /> */}
+          <MetaDiv>
+            <input type='checkbox' onChange={onCheckBtn} checked={wantedVideo?.map((video:any) => video?.id).includes(video?.id) ? true : false}/>
+            <Title>{video.snippet.title}</Title>
+            {/* <Channel>{video.snippet.channelTitle}</Channel> */}
+            <h5>{video.statistics.viewCount}회</h5>
+          </MetaDiv>
+        </Video>
+      </Container>
     );
   }
 
 const Container = styled.li`
-  width: 100%;
-  margin-bottom: 10px;
   list-style: none;
 `
 const Video = styled.div`
-  display: flex;
-  align-items: center;
   cursor: pointer;
   transition: transform 250ms ease-in;
   border: 1px solid lightgray;
   box-shadow: 3px 3px 5px 0px rgba(191, 191, 191, 0.53);
+  border-radius: 10px;
+  margin-bottom:10px;
+  &.active {
+    background-color: red;
+    color : #fff;
+  }
 `
 const Thumnail = styled.img`
   width: 40%;
   height: 100%;
 `
 const MetaDiv = styled.div`
-    margin-left: 0.2em;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 const Title = styled.p`
-    margin: 0;
+  width: 50%;
+  margin-left: 10px;
+  margin-right: 10px;
   font-size: 0.8rem;
-`
-const Channel = styled.p`
-    margin: 0;
-    font-size: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 export default VideoItem

@@ -12,6 +12,7 @@ import Artist from "../artist/Artist"
 import Album from "../album/Album"
 import LiveClip from "../components/LiveClip"
 import Cover from "../components/Cover"
+import DailyCharts from "src/components/DailyCharts"
 
 
 function Page({userObj ,refreshUser}:IUser) {
@@ -26,7 +27,7 @@ function Page({userObj ,refreshUser}:IUser) {
             <Route path='/cover' element={<Cover/>}/>
             <Route path='/mylist' element={<PlayVideo/>}/>
             <Route path='/liveclip' element={<LiveClip/>}/>
-            <Route path='/artist' element={<Artist/>}/>
+            <Route path='/artist' element={<DailyCharts/>}/>
             <Route path='/album' element={<Album/>}/>
         </Routes>
     )

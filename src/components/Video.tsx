@@ -85,12 +85,10 @@ const Video = () => {
   let nowTime = formatElapsed(elapsedTime)
   return (
     <Detail>
-      <Thumbnails src={allVideos[videoIndex]?.snippet.thumbnails.maxres.url} alt='thumbnails'/>
+      <Thumbnails src={allVideos[videoIndex]?.snippet?.thumbnails?.medium?.url} alt='thumbnails'/>
       <ReactPlayer 
         ref={videoRef}
-        url={`https://www.youtube-nocookie.com/embed/${allVideos[videoIndex]?.id}?showinfo=0&enablejsapi=1&origin=http://localhost:3000`} 
-        width='100%'
-        height='500px'
+        url={`https://www.youtube-nocookie.com/embed/${allVideos[videoIndex]?.id}`} 
         volume={volume}
         loop={isLoop}
         muted={isMuted}
@@ -99,41 +97,61 @@ const Video = () => {
         onEnded ={handleNextVideo}
         style={{display : 'none'}}
         />
-    <Info>
-      <h4>{allVideos[videoIndex]?.snippet?.title}</h4>
-      <h4>{allVideos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4>
-      <Progress>
-        <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange} onClick={onClickSeek}/>
-        <p>{nowTime} | {duration}</p>
-      </Progress>
-      <div style={{display:'flex'}}>
-        <img src={Prev} alt='prev' onClick={handlePrevVideo} style={{width :'30px', height : '30px'}}></img>
-        <button onClick={backwardBtn}>-5</button>
-        {isPlaying ? <img src={Pause} alt='pause' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/> : <img src={Play} alt='play' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/>}
-        <button onClick={forwardBtn}>+5</button>
-        <img src={Next} alt="next" onClick={handleNextVideo} style={{width :'30px', height : '30px'}}></img>
-        <VolumeControls volume={volume * 100} isMuted={isMuted}>
-          {isMuted || volume * 100 === 0 ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
-          <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
-        </VolumeControls>
-        {isLoop ? <img src={Loop} alt='loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/> : <img src={NotLoop} alt='not loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/>}
-        <button onClick={onRandomToggle}>random</button>
-      </div>
-    </Info>
+      <Info>
+        <Title>{allVideos[videoIndex]?.snippet?.title}</Title>
+        {/* <h4>{allVideos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4> */}
+        <span>{nowTime} | {duration}</span>
+        <Progress>
+          <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange} onClick={onClickSeek}/>
+        </Progress>
+        <div style={{display:'flex'}}>
+          <img src={Prev} alt='prev' onClick={handlePrevVideo} style={{width :'30px', height : '30px'}}></img>
+          {/* <button onClick={backwardBtn}>-5</button> */}
+          {isPlaying ? <img src={Pause} alt='pause' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/> : <img src={Play} alt='play' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/>}
+          {/* <button onClick={forwardBtn}>+5</button> */}
+          <img src={Next} alt="next" onClick={handleNextVideo} style={{width :'30px', height : '30px'}}></img>
+          <VolumeControls volume={volume * 100} isMuted={isMuted}>
+            {isMuted || volume * 100 === 0 ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
+            <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
+          </VolumeControls>
+          {isLoop ? <img src={Loop} alt='loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/> : <img src={NotLoop} alt='not loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/>}
+          <button onClick={onRandomToggle}>random</button>
+        </div>
+      </Info>
     </Detail>
   )
 }
-
-const Thumbnails = styled.img`
-  width : 100%;
-  height: 500px;
-`
-
 const Detail = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  width: 500px;
+  height: 500px;
+  border : 1px solid #fff;
+  border-radius: 20px;
+  box-shadow: 3px 3px 5px 0px rgba(191, 191, 191, 0.53);
+  margin-right: 30px;
+`
+const Title = styled.p`
+  width: 70%;
+  margin: auto auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+const Thumbnails = styled.img`
+  width : 250px;
+  height: 250px;
+  border-radius: 20px;
 `
 
 const Info = styled.div`
-  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 
 const VolumeControls = styled.div<{volume : number; isMuted : boolean}>`
@@ -172,7 +190,7 @@ const VolumeControls = styled.div<{volume : number; isMuted : boolean}>`
   }
 `
 const Progress = styled.div`
-  display :flex;
+
 `
 
 export default React.memo(Video)

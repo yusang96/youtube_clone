@@ -21,11 +21,17 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@googleapis/*": ["node_modules/@googleapis/*"],
+      "gaxios": ["node_modules/gaxios/build/src/index"],
+      "@types/gaxios": ["node_modules/@types/gaxios"]
+    }
   },
   "include": [
     "./src/"
-  ],
+, "dailystatus.js"  ],
   "exclude": [
     "node_modules/*"
   ]

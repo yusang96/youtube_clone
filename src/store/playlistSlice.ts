@@ -81,8 +81,10 @@ export const getLiveClipInfo = createAsyncThunk('get/clipInfo' ,
 interface IPlaylistProps {
     sort : string,
     dailyTime : string,
+    weeklyTime : string,
     allData : IVideo[],
     allVideos : IVideo[],
+    latestData : IVideo[],
     prevData : IVideo[],
     weeklyData : IVideo[],
     coverVideo : IVideo[],
@@ -96,8 +98,10 @@ interface IPlaylistProps {
 const initialPlaylistState:IPlaylistProps = {
     sort : '누적순',
     dailyTime : moment().format('HH:mm:ss'),
+    weeklyTime : moment().format('YYYY-MM-DD'),
     allData : [],
     allVideos : [],
+    latestData : [],
     prevData : [],
     weeklyData : [],
     coverVideo : [],
@@ -129,6 +133,9 @@ const playlistSlice = createSlice({
         },
         setTimes(state,action) {
             state.dailyTime = action.payload
+        },
+        setLatestData(state,action) {
+            state.latestData = action.payload
         }
     },
     extraReducers: builder => {
@@ -137,7 +144,7 @@ const playlistSlice = createSlice({
         });
         builder.addCase(getFriaPlaylistInfo.fulfilled, (state, { payload }) => {
             if (payload) {
-                state.allVideos = payload
+                // state.allVideos = payload
                 state.coverVideo = payload
             }
         });

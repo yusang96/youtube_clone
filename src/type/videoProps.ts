@@ -1,7 +1,9 @@
 export interface IVideo {
     etag: string;
     id : string;
-
+    weeklyStatistics : {
+        viewCount : string;
+    };
     snippet : {
         title : string;
         channelId : string;
@@ -15,6 +17,9 @@ export interface IVideo {
                 url : string
             },
             maxres : {
+                url : string
+            },
+            standard : {
                 url : string
             }
         }

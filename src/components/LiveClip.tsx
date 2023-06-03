@@ -1,26 +1,51 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { playlistActions } from '../store/playlistSlice'
+import { getLiveClip, getLiveClipInfo, playlistActions } from '../store/playlistSlice'
+import { AppDispatch } from '../store/store'
 import { videoActions } from '../store/videoSlice'
 import { IVideo } from '../type/videoProps'
 import Video from './Video'
-import VideoItem from './VideoItem'
 import VideoLists from './VideoLists'
 
 const LiveClip = () => {
-  const dispatch = useDispatch()
-  const {liveClips} = useSelector((state:any) => state.playlist)
+  const dispatch = useDispatch<AppDispatch>()
+  const {liveClips,clipData,allVideos} = useSelector((state:any) => state.playlist)
+  const {wantedVideo } = useSelector((state:any) => state.video)
   const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
   const videoIndex = useSelector((state:any)=>state.video.index)
-  useEffect(() => {
+  const formatIdString = (list:IVideo[]) => {
+    let videoIdList:string[] = []
+    list?.map((x) => (
+          videoIdList?.push("&id=" + x.snippet.resourceId.videoId)
+        ));
+    let videoIdString = videoIdList?.join("");
+    return videoIdString
+  }
+  const liveCliplistId = formatIdString(clipData!)
+  const onAllClick = () => {
+    dispatch(videoActions.currentIndex(0))
+    dispatch(playlistActions.setSelectedVideos(allVideos))
+  }
+  const onClick = () => {
+    dispatch(videoActions.currentIndex(0))
+    dispatch(playlistActions.setSelectedVideos(wantedVideo))
+  }
+  useEffect(()=> {
     dispatch(videoActions.currentIndex(''))
-    dispatch(videoActions.setSelectedVideo(liveClips[videoIndex]))
-    dispatch(playlistActions.setSelectedVideos(liveClips))
-  },[dispatch, liveClips, videoIndex])
-  console.log(liveClips)
+    dispatch(getLiveClip())
+    dispatch(getLiveClipInfo(liveCliplistId))
+    if (liveClips) {
+      dispatch(videoActions.setSelectedVideo(liveClips[videoIndex]))
+      dispatch(playlistActions.setSelectedVideos(liveClips))
+    }
+  },[dispatch, liveCliplistId, liveClips, videoIndex])
+
   return (
     <App>
+      <Link to='/playlist' onClick={onAllClick}><button>전체 재생</button></Link>
+      {wantedVideo.length > 0 ? <Link to='/mylist' onClick={onClick}><button>내 목록 {wantedVideo.length}</button></Link> : ''}
       <Content>
         {selectedVideo && (
           <Detail>
