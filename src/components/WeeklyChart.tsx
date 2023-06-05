@@ -9,11 +9,11 @@ const WeeklyChart = () => {
   const [code , setCode] = useState('');
   // const channelId = 'UC0E8YC4Jw27mu4eQhQk02_w'
   // const client_id = '1038948197615-4mhfcblo5djv05j0dbkpli0b5mf3utp7.apps.googleusercontent.com'
-  // const client_secret = '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'
+  // const client_secret = 'asdadadas'
   const apikey =process.env.REACT_APP_API_KEY
   const channelId = 'MINE'
   const client_id = '1023793768951-ogt0g1ar3d84bvrn293asr9i4n5b30pa.apps.googleusercontent.com'
-  const client_secret = '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'
+  const client_secret = 'dasdasd'
   const redirectUri = 'http://localhost:3000/oauth2callback'
   const scope= "https://www.googleapis.com/auth/yt-analytics.readonly"
   const getAuthUrl =`https://accounts.google.com/o/oauth2/v2/auth?scope=${scope}&redirect_uri=${redirectUri}&client_id=${client_id}&prompt=consent&response_type=code&access_type=offline&key=${apikey}`;
