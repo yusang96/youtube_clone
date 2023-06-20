@@ -5,5 +5,5 @@ export interface IUserObj {
             displayName? : string
         } | any
     }
-    refreshUser? : () => void;
+    refreshUser():void;
 }

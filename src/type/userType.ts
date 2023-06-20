@@ -10,5 +10,4 @@ export interface IUser {
     userObj? : {
         displayName? : string;
     }
-    refreshUser? : () => void;
 }

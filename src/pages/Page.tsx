@@ -13,9 +13,10 @@ import Album from "../album/Album"
 import LiveClip from "../components/LiveClip"
 import Cover from "../components/Cover"
 import DailyCharts from "src/components/DailyCharts"
+import { IUserObj } from "src/type/userObjProps"
 
 
-function Page({userObj ,refreshUser}:IUser) {
+const Page:React.FC<IUserObj> = ({userObj ,refreshUser}) =>{
     return (
         <Routes>
             <Route path="/" element={<Home/>}></Route>

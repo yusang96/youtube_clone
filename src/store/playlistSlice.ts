@@ -84,6 +84,7 @@ interface IPlaylistProps {
     weeklyTime : string,
     allData : IVideo[],
     allVideos : IVideo[],
+    playlists:IVideo[],
     latestData : IVideo[],
     prevData : IVideo[],
     weeklyData : IVideo[],
@@ -100,6 +101,7 @@ const initialPlaylistState:IPlaylistProps = {
     dailyTime : moment().format('HH:mm:ss'),
     weeklyTime : moment().format('YYYY-MM-DD'),
     allData : [],
+    playlists : [],
     allVideos : [],
     latestData : [],
     prevData : [],
@@ -118,6 +120,9 @@ const playlistSlice = createSlice({
     reducers : {
         setAllVideos(state,action) {
             state.allVideos = action.payload
+        },
+        setPlaylists(state,action) {
+            state.playlists = action.payload
         },
         setPrevData(state,action) {
             state.prevData = action.payload

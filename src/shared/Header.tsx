@@ -49,6 +49,7 @@ const HeaderDiv = styled.div`
   align-items: center;
   background-color: #fff;
   box-sizing: border-box;
+  z-index: 10;
 `
 const Tab = styled.div`
   display: flex;

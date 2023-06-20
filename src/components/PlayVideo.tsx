@@ -13,7 +13,7 @@ const PlayVideo = () => {
     const videoIndex = useSelector((state:any)=>state.video.index)
     const selectedVideo = useSelector((state:any) => state.video.selectedVideo)
     useEffect(() => {
-        dispatch(videoActions.setSelectedVideo(wantedVideo[videoIndex]))
+      dispatch(videoActions.setSelectedVideo(wantedVideo[videoIndex]))
     },[dispatch, videoIndex, wantedVideo])
   return (
     <>

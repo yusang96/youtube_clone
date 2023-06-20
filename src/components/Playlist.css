@@ -1,0 +1,16 @@
+.image-bg {
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    height: 500px;
+    margin: 10px auto;
+    border-radius: 30px;
+    background-image : url(../data/플레이어\ 배경.png);
+    background-size : cover;
+    background-position : center;
+    @media (max-width : 768px) {
+        flex-direction:column;
+    }
+  }

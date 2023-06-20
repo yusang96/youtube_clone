@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ReactPlayer from 'react-player/lazy'
 import MuteSpeaker from '../data/Mute_Icon.svg'
@@ -9,15 +9,18 @@ import Prev from '../data/prev.svg'
 import Next from '../data/next.svg'
 import Loop from '../data/loop-69.svg'
 import NotLoop from '../data/loop-none.svg'
+import Random from '../data/random.svg'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { useDispatch } from 'react-redux/es/exports'
 import { videoActions } from '../store/videoSlice'
 import { RootState } from '../store/store'
+import dayjs from 'dayjs'
 
 const Video = () => {
   const dispatch = useDispatch()
   const {isPlaying,isMuted,volume,isLoop,isRandom,elapsedTime,duration} = useSelector((state:RootState) => state.video)
   const {allVideos } = useSelector((state:any) => state.playlist)
+  const [isHovered, setIsHovered] = useState(false);
   const videoIndex = useSelector((state:any) => state.video.index)
   const videoRef = useRef<ReactPlayer>(null)
   const totalTime = videoRef && videoRef.current ? videoRef.current.getDuration() : 0
@@ -67,9 +70,10 @@ const Video = () => {
     dispatch(videoActions.setIsRandom())
   }
   const formDuration = (value:string) => {
-    const minute = value?.slice(2,3)
-    const seconds = parseInt(value?.slice(4,6))
-    return `0${minute}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    const timeDuration = dayjs.duration(value)
+    const minutes = timeDuration.minutes();
+    const seconds = timeDuration.seconds();
+    return `${minutes > 10 ? minutes : `0${minutes}`}:${seconds < 10 ? `0${seconds}` : seconds}`;
   }
   const formatElapsed = (value:number) => {
     if (value === 0 ) {
@@ -98,24 +102,24 @@ const Video = () => {
         style={{display : 'none'}}
         />
       <Info>
-        <Title>{allVideos[videoIndex]?.snippet?.title}</Title>
+        {/* <Title>{allVideos[videoIndex]?.snippet?.title}</Title> */}
         {/* <h4>{allVideos[videoIndex]?.snippet?.publishedAt.slice(0,10)}</h4> */}
         <span>{nowTime} | {duration}</span>
         <Progress>
           <input type='range' min={0} max={totalTime ? totalTime : 0} value={elapsedTime} onChange={onSeekChange} onClick={onClickSeek}/>
         </Progress>
-        <div style={{display:'flex'}}>
+        <div style={{display:'flex' , justifyContent : 'center' }}>
+          <img src={Random} alt='random_btn' onClick={onRandomToggle} style={{width :'30px', height : '30px'}}/>
           <img src={Prev} alt='prev' onClick={handlePrevVideo} style={{width :'30px', height : '30px'}}></img>
           {/* <button onClick={backwardBtn}>-5</button> */}
           {isPlaying ? <img src={Pause} alt='pause' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/> : <img src={Play} alt='play' style={{width :'30px', height : '30px'}} onClick={togglePlaying}/>}
           {/* <button onClick={forwardBtn}>+5</button> */}
           <img src={Next} alt="next" onClick={handleNextVideo} style={{width :'30px', height : '30px'}}></img>
-          <VolumeControls volume={volume * 100} isMuted={isMuted}>
-            {isMuted || volume * 100 === 0 ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
-            <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
-          </VolumeControls>
           {isLoop ? <img src={Loop} alt='loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/> : <img src={NotLoop} alt='not loop' onClick={onToggleLoop} style={{width :'30px', height : '30px'}}/>}
-          <button onClick={onRandomToggle}>random</button>
+          <VolumeControls volume={volume * 100} isMuted={isMuted} isHovered={isHovered} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+            <input type='range' value={isMuted ? 0 : volume * 100} min='0' max='100' onChange={onVolumeChange} step='10'/>
+            {isMuted || volume * 100 === 0 ? <img src={MuteSpeaker} alt='muted' style={{width :'30px', height : '30px'}} onClick={onMutedToggle}/> : <img src={Speaker} alt='speaker' style={{width :'30px', height : '30px'}} onClick={() => onMutedToggle()}/>}
+          </VolumeControls>
         </div>
       </Info>
     </Detail>
@@ -127,12 +131,21 @@ const Detail = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   border : 1px solid #fff;
   border-radius: 20px;
   box-shadow: 3px 3px 5px 0px rgba(191, 191, 191, 0.53);
   margin-right: 30px;
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 50%;
+    height: 100%;
+    margin-bottom: 30px;
+  }
 `
 const Title = styled.p`
   width: 70%;
@@ -142,9 +155,13 @@ const Title = styled.p`
   white-space: nowrap;
 `
 const Thumbnails = styled.img`
-  width : 250px;
-  height: 250px;
+  width : 40%;
+  height: 40%;
   border-radius: 20px;
+  @media (max-width: 768px) {
+    width: 50%;
+    height: 50%;
+  }
 `
 
 const Info = styled.div`
@@ -153,37 +170,50 @@ const Info = styled.div`
   justify-content: center;
   align-items: center;
 `
-
-const VolumeControls = styled.div<{volume : number; isMuted : boolean}>`
+const VolumeControls = styled.div<{ volume: number; isMuted: boolean; isHovered: boolean }>`
   display :flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  flex-direction: ${(props) => (props.isHovered ? 'column' : '')};
 
   input[type='range'] {
+    display: ${(props) => (props.isHovered ? 'block' : 'none')};
+    transform: rotate(-90deg);
+    position: absolute;
+    top:-70px;
     -webkit-appearance: none;
-    height: 100%;
-    background: transparent;
+    background: #d9d9d9;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
 
-    &:focus {
-      outline: none;
-    }
-
-    //WEBKIT
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 16px;
-      width: 16px;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #ffffff;
       border-radius: 50%;
-      background: ${(props) => (props.volume ? "#d9d9d9" : "#E5E7EB")};
-      margin-top: -5px;
       cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    &::-webkit-slider-thumb:hover {
+      background-color: #bfbfbf;
+    }
+
+    &::-webkit-slider-thumb:active {
+      background-color: #999999;
     }
     &::-webkit-slider-runnable-track {
       height: 0.6rem;
       background: ${(props) =>
         props.volume && !props.isMuted
-          ? `linear-gradient(to right, #D9D9D9 ${props.volume}%, rgba(229, 231, 235, 0.5)
+          ? `linear-gradient(to right, red ${props.volume}%, rgba(229, 231, 235, 0.5)
         ${props.volume}% 100%)`
           : "#E5E7EB"};
-      border-radius: 3rem;
+      border-radius: 20px;
       transition: all 0.5s;
       cursor: pointer;
     }

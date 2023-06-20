@@ -138,6 +138,6 @@ const Thumnail = styled.img`
   width: 10%;
   height: 50px;
   border-radius: 5px;
-  z-index: 1;
+  z-index: 0;
 `
 export default Weekly

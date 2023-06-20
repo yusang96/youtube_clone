@@ -9,7 +9,7 @@ import { AppDispatch } from './store/store';
 import { IUser } from './type/userType';
 import Footer from './components/Footer';
 
-function App() {
+const App:React.FC= () => {
   const dispatch = useDispatch<AppDispatch>()
   const {allData,clipData,coverVideo , liveClips} = useSelector((state:any) => state.playlist)
   const [isLogin , setIsLogin] = useState(false);
